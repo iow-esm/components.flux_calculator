@@ -1,0 +1,20 @@
+ ! NOAA/PMEL TMAP
+ ! PyFerret v7.5 (optimized)
+ ! Linux 4.15.0-1059-azure - 10/16/19
+ !  4-Aug-20 10:44     
+
+set mode verify
+use "https://maar:hbm_maar@thredds-iow.io-warnemuende.de/thredds/dodsC/balticnorthsea/prod1_coarse.nc"
+sh data
+use "https://thredds-iow.io-warnemuende.de/thredds/dodsC/BMIP/IOW-THREDDS-BMIP_bmip_rivers1_2019-10-10-13.nc"
+sh data
+canc data/all
+use "http://thredds-iow.io-warnemuende.de/thredds/dodsC/BMIP/IOW-THREDDS-BMIP_bmip_rivers1_2019-10-10-13.nc"
+sh data
+canc data/all
+use "http://maar:hbm_maar@thredds-iow.io-warnemuende.de/thredds/dodsC/balticnorthsea/prod1_coarse.nc"
+sh daza
+sh data
+canc data/all
+use "http://maar:hbm_maar@thredds-iow.io-warnemuende.de:8080/thredds/dodsC/balticnorthsea/prod1_coarse.nc"
+q

@@ -45,7 +45,34 @@
         {
             "label": "build_flux_calculator_haumea",
             "type": "shell",
-            "command": "cd /media/d/hagen/iow/climate/coupled_model/IOW_ESM/components/flux_calculator; rsync -r -i -u src haumea1:/data/hr275/IOW_ESM/components/flux_calculator/.; ssh -t haumea1 'cd /data/hr275/IOW_ESM/components/flux_calculator/; srun -t 01:00:00 -p compute -N1 --tasks-per-node 1 --pty bash -c \"source ~/.bash_profile; source build_debug.sh\"'",
+            "command": "cd /media/d/IOW_ESM/components/flux_calculator; rsync -r -i -u src haumea1:/data/sk1480/IOW_ESM/components/flux_calculator/.; ssh -t haumea1 'cd /data/sk1480/IOW_ESM/components/flux_calculator/; srun -t 01:00:00 -p compute -N1 --tasks-per-node 1 --pty bash -c \"source ~/.bash_profile; source build_debug.sh\"'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": {
+                "owner": "ifort",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^../src/(.*?)\\((.*?)\\): (warning|error) (.*)",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            }
+        },
+        {
+            "label": "build_flux_calculator_phy-2",
+            "type": "shell",
+            "command": "cd /media/d/IOW_ESM/components/flux_calculator; rsync -r -i -u src karsten@phy-2:/silod7/karsten/IOW_ESM/components/flux_calculator/.; ssh -t karsten@phy-2 'cd /silod7/karsten/IOW_ESM/components/flux_calculator/; source build_debug.sh'",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -72,7 +99,7 @@
 	    {
             "label": "run_IOW_ESM_haumea",
             "type": "shell",
-            "command": "ssh -t haumea1 'cd /data/hr275/IOW_ESM/scripts/run; source ~/.bash_profile; sbatch jobscript'",
+            "command": "ssh -t haumea1 'cd /data/sk1480/IOW_ESM/scripts/run; source ~/.bash_profile; sbatch jobscript'",
             "group": {
                 "kind": "test",
                 "isDefault": true

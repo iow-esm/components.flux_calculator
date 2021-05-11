@@ -45,7 +45,7 @@
         {
             "label": "build_flux_calculator_haumea",
             "type": "shell",
-            "command": "cd /media/d/IOW_ESM/components/flux_calculator; rsync -r -i -u src haumea1:/data/sk1480/IOW_ESM/components/flux_calculator/.; ssh -t haumea1 'cd /data/sk1480/IOW_ESM/components/flux_calculator/; srun -t 01:00:00 -p compute -N1 --tasks-per-node 1 --pty bash -c \"source ~/.bash_profile; source build_debug.sh\"'",
+            "command": "cd /media/e/Projects/IOW_ESM/components/flux_calculator; rsync -r -i -u src haumea1:/data/sk1480/IOW_ESM/components/flux_calculator/.; ssh -t haumea1 'cd /data/sk1480/IOW_ESM/components/flux_calculator/; srun -t 01:00:00 -p compute -N1 --tasks-per-node 1 --pty bash -c \"source ~/.bash_profile; source build_debug.sh\"'",
             "group": {
                 "kind": "build",
                 "isDefault": true

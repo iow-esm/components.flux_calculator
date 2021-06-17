@@ -12,6 +12,9 @@ PROGRAM flux_calculator
   USE flux_calculator_prepare   ! Functions to check if we have all we need to do the calculations
   USE flux_calculator_calculate ! Functions to actually do the calculations
 
+  USE flux_calculator_parse_arg
+  USE flux_calculator_create_namcouple
+
   ! Use OASIS communication library
   USE mod_oasis
   USE mod_oasis_data, only: oasis_debug
@@ -52,6 +55,7 @@ PROGRAM flux_calculator
   ! Namelist variables
   INTEGER                                                    :: timestep            = 0  ! coupling timestep in seconds
   INTEGER                                                    :: num_timesteps       = 0  ! number of time steps in this run
+  CHARACTER(50)                                              :: name_atmos_model    = ''
   CHARACTER(50), DIMENSION(MAX_BOTTOM_MODELS)                :: name_bottom_model   = ''
   CHARACTER(1), DIMENSION(MAX_BOTTOM_MODELS)                 :: letter_bottom_model = ''
   INTEGER, DIMENSION(MAX_BOTTOM_MODELS)                      :: num_tasks_per_model = 0
@@ -104,6 +108,7 @@ PROGRAM flux_calculator
   CHARACTER(len=20), DIMENSION(MAX_BOTTOM_MODELS, MAX_SURFACE_TYPES) :: which_flux_radiation_blackbody = 'none'    ! 'none' 'StBo'                           -> RBBR
 
   NAMELIST /input/ timestep, num_timesteps,                                  &
+                   name_atmos_model,                                         &
                    name_bottom_model, letter_bottom_model,                   &
                    num_tasks_per_model,                                      &
                    num_t_grid_cells, num_u_grid_cells, num_v_grid_cells,     &
@@ -157,6 +162,8 @@ PROGRAM flux_calculator
 
   TYPE(sparse_regridding_matrix) :: regrid_u_to_t_matrix, regrid_t_to_u_matrix
   TYPE(sparse_regridding_matrix) :: regrid_v_to_t_matrix, regrid_t_to_v_matrix
+
+  LOGICAL :: generate_namcouple = .FALSE.
   
   !###############################################################################
   !# STEP 1:  INITIALIZATION                                                     #
@@ -173,17 +180,30 @@ PROGRAM flux_calculator
   ! Initialize the idx_???? variables which store the index of a variable name
   CALL init_varname_idx
 
+  ! Check if we should generate the namcouple file from here,
+  ! if yes, nothing else will be done
+  IF (find_argument("--generate_namcouple")) THEN
+    generate_namcouple = .TRUE.
+  ENDIF
+
+
   !###############################################################################
   !# STEP 1.2:  OASIS INITIALIZATION                                             #
   !###############################################################################
 
+
+
   CALL MPI_Init(ierror)
+
+! if we generate the namcouple from here, we must not use OASIS coupler
+IF (.NOT. generate_namcouple) THEN
   !!!!!!!!!!!!!!!!! OASIS_INIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   CALL oasis_init_comp (comp_id, comp_name, ierror )   ! get component id
   IF (ierror /= 0) THEN
       WRITE(0,*) 'oasis_init_comp abort by flux_calculator compid ',comp_id
       CALL oasis_abort(comp_id,comp_name,'Failed to call oasis_init_comp')
   ENDIF
+ENDIF
   !
   ! Unit for output messages : one file for each process
   CALL MPI_Comm_Rank ( MPI_COMM_WORLD, rank, ierror )   ! get my own rank (globally) - we will not use it
@@ -202,6 +222,9 @@ PROGRAM flux_calculator
   WRITE (w_unit,*) 'I am component ', TRIM(comp_name), ' rank :',rank
   WRITE (w_unit,*) '----------------------------------------------------------'
   CALL flush(w_unit)
+
+! if we generate the namcouple from here, we must not use OASIS coupler
+IF (.NOT. generate_namcouple) THEN
   !
   !!!!!!!!!!!!!!!!! OASIS_GET_LOCALCOMM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !
@@ -211,6 +234,9 @@ PROGRAM flux_calculator
       WRITE (w_unit,*) 'oasis_get_localcomm abort by flux_calculator compid ',comp_id
       CALL oasis_abort(comp_id,comp_name,'Failed to call oasis_get_localcomm')
   ENDIF
+ELSE
+  localComm = MPI_COMM_WORLD
+ENDIF
   !
   ! Get MPI size and rank
   CALL MPI_Comm_Size ( localComm, npes, ierror )   ! get number of PEs running flux_calculator
@@ -606,7 +632,7 @@ PROGRAM flux_calculator
     CALL prepare_flux_momentum_north(i, 3, which_flux_momentum(my_bottom_model,i), grid_size(3), local_field) ! VMOM on v_grid
   ENDDO
   CALL prepare_regridding(idx_VMOM, 0, local_field, my_bottom_model, regrid_u_to_t, regrid_v_to_t, regrid_t_to_u, regrid_t_to_v, grid_size)
-  
+
   !###############################################################################
   !# STEP 1.7:  FIND OUT WHAT I SHALL SEND,                                      #
   !#            AND IF I WILL HAVE CALCULATED EVERYTHING I NEED FOR THAT         #
@@ -714,6 +740,18 @@ PROGRAM flux_calculator
   DO i=1,num_output_fields
     WRITE(w_unit,*) '    ',output_field(i)%name,'   on grid ',output_field(i)%which_grid
   ENDDO
+
+  !###############################################################################
+  !# STEP 1.7.1:  generate namcouple file                                        #
+  !###############################################################################
+IF (generate_namcouple) THEN
+  CALL create_namcouple(input_field, num_input_fields, output_field, num_output_fields, &
+                            name_atmos_model, name_bottom_model, letter_bottom_model,       &
+                            timestep, num_timesteps)
+
+  CALL mpi_finalize(ierror)
+  STOP ! if we generate the namcouple from here, we are done
+ENDIF
 
   !###############################################################################
   !# STEP 1.8:  OASIS GRID INITIALIZATION                                        #

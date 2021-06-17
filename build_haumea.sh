@@ -54,10 +54,12 @@ $AR rv flux_library.a *.o
 #$FC -c $FFLAGS ../src/read_grid.F90 -DUSE_DOUBLE_PRECISION -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
 #$FC -c $FFLAGS ../src/decomp_def.F90 -DUSE_DOUBLE_PRECISION -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
 #$FC -c $FFLAGS ../src/read_dimgrid.F90 -DUSE_DOUBLE_PRECISION -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
-$FC -c $FFLAGS ../src/flux_calculator_basic.F90 
+$FC -c $FFLAGS ../src/flux_calculator_basic.F90
 $FC -c $FFLAGS ../src/flux_calculator_prepare.F90
 $FC -c $FFLAGS ../src/flux_calculator_calculate.F90
+$FC -c $FFLAGS ../src/flux_calculator_parse_arg.F90
 $FC -c $FFLAGS ../src/flux_calculator_io.F90 -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
-$FC $FFLAGS -o ../bin/flux_calculator ../src/flux_calculator.F90 flux_calculator_basic.o flux_calculator_prepare.o flux_calculator_calculate.o flux_calculator_io.o flux_library.a $INCLUDES $LIBS -Wl,-rpath,${IOW_ESM_NETCDF_LIBRARY}
+$FC -c $FFLAGS ../src/flux_calculator_create_namcouple.F90
+$FC $FFLAGS -o ../bin/flux_calculator ../src/flux_calculator.F90 flux_calculator_basic.o flux_calculator_prepare.o flux_calculator_calculate.o flux_calculator_io.o flux_calculator_parse_arg.o flux_calculator_create_namcouple.o flux_library.a $INCLUDES $LIBS -Wl,-rpath,${IOW_ESM_NETCDF_LIBRARY}
 
 cd ..

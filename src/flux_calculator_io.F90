@@ -5,7 +5,13 @@ MODULE flux_calculator_io
 
     IMPLICIT NONE
 
-    public read_scrip_grid_dimensions, read_regridding_matrix
+    public read_scrip_grid_dimensions, read_regridding_matrix, read_remapping
+
+    ! define a type to store info about remapping
+    TYPE remapping_info_type
+        INTEGER, DIMENSION(2)   :: src_grid_dims
+        INTEGER, DIMENSION(2)   :: dst_grid_dims
+    END TYPE remapping_info_type
 
     contains
 
@@ -147,6 +153,45 @@ MODULE flux_calculator_io
         DEALLOCATE(all_weight%field)
       
     END SUBROUTINE read_regridding_matrix
+
+    SUBROUTINE read_remapping(remapping_filename, remapping_info)
+        
+        USE netcdf
+        
+        CHARACTER(len=128),              INTENT(IN)     :: remapping_filename
+        TYPE(remapping_info_type),       INTENT(OUT)    :: remapping_info
+
+        INTEGER                               :: nc              ! NetCDF file id
+        INTEGER                               :: varid           ! NetCDF variable id
+
+        INTEGER :: src_grid_rank, dst_grid_rank
+
+        ! read in the dimensions for remapping
+        CALL hdlerr(NF90_OPEN(remapping_filename, NF90_NOWRITE, nc), __LINE__ )
+
+        CALL hdlerr( NF90_INQ_DIMID(nc, 'src_grid_rank' ,  varid),    __LINE__ )                      ! get variable id
+        CALL hdlerr( NF90_INQUIRE_DIMENSION(nc, varid, len=src_grid_rank), __LINE__ ) ! get variable values
+        WRITE (*,*) 'src_grid_rank ', src_grid_rank
+
+        CALL hdlerr( NF90_INQ_VARID(nc, 'src_grid_dims' ,  varid),    __LINE__ )                      ! get variable id
+        CALL hdlerr( NF90_GET_VAR (nc, varid, remapping_info%src_grid_dims(:), [1], [src_grid_rank]), __LINE__ ) ! get variable values
+        IF (src_grid_rank == 1) THEN
+            remapping_info%src_grid_dims(2) = 1
+        ENDIF
+
+        CALL hdlerr( NF90_INQ_DIMID(nc, 'dst_grid_rank' ,  varid),    __LINE__ )                      ! get variable id
+        CALL hdlerr( NF90_INQUIRE_DIMENSION(nc, varid, len=dst_grid_rank), __LINE__ ) ! get variable values
+
+        CALL hdlerr( NF90_INQ_VARID(nc, 'dst_grid_dims' ,  varid),    __LINE__ )                      ! get variable id 
+        CALL hdlerr( NF90_GET_VAR (nc, varid, remapping_info%dst_grid_dims(:), [1], [dst_grid_rank]), __LINE__ ) ! get variable values
+        IF (dst_grid_rank == 1) THEN
+            remapping_info%dst_grid_dims(2) = 1
+        ENDIF
+        
+        CALL hdlerr(NF90_CLOSE(nc),    __LINE__ )
+
+
+    END SUBROUTINE read_remapping
 
     SUBROUTINE hdlerr(istatus, line)
     ! handle errors during NetCDF calls

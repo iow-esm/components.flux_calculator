@@ -133,7 +133,7 @@ MODULE flux_calculator_basic
                     input_field(num_input_fields)%which_grid = which_grid
                     input_field(num_input_fields)%field => local_field%var(i)%field
                     input_field(num_input_fields)%early=.FALSE.
-                    IF ((myname=="FARE") .OR. (myname=="TSUR")) THEN
+                    IF ((myname=="FARE") .OR. (myname=="TSUR") .OR. (myname=="FICE") .OR. (myname=="ALBE")) THEN
                         input_field(num_input_fields)%early=.TRUE.
                     ENDIF
                     input_field(num_input_fields)%surface_type = surface_type
@@ -250,7 +250,7 @@ MODULE flux_calculator_basic
                         output_field(num_output_fields)%which_grid = which_grid
                         output_field(num_output_fields)%field => local_field(surface_type,which_grid)%var(i)%field
                         output_field(num_output_fields)%early=.FALSE.
-                        IF ((myname=="RBBR") .OR. (myname=="TSUR")) THEN
+                        IF ((myname=="RBBR") .OR. (myname=="TSUR") .OR. (myname=="FICE") .OR. (myname=="ALBE")) THEN
                             output_field(num_output_fields)%early=.TRUE.
                         ENDIF
                     ENDIF

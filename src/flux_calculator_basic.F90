@@ -133,7 +133,7 @@ MODULE flux_calculator_basic
                     input_field(num_input_fields)%which_grid = which_grid
                     input_field(num_input_fields)%field => local_field%var(i)%field
                     input_field(num_input_fields)%early=.FALSE.
-                    IF ((myname=="FARE") .OR. (myname=="TSUR") .OR. (myname=="FICE") .OR. (myname=="ALBE")) THEN
+                    IF ((myname=="FARE") .OR. (myname=="TSUR") .OR. (myname=="FICE") .OR. ((myname=="ALBE") .AND. (my_letter /= 'A'))) THEN
                         input_field(num_input_fields)%early=.TRUE.
                     ENDIF
                     input_field(num_input_fields)%surface_type = surface_type
@@ -173,6 +173,11 @@ MODULE flux_calculator_basic
         DO i=1,num_input_fields
           IF (trim(input_field(i)%name)=="R"//my_letter//myname//appendstring) found=.TRUE.
         ENDDO
+        IF (found) THEN
+            IF((trim(myname) == "ALBE") .AND. (trim(my_letter) == 'A')) THEN
+                found = .FALSE.
+            ENDIF
+        ENDIF
         IF (.NOT. found) THEN ! Okay field does not come as input
             DO i=1,MAX_VARNAMES
                 IF (varnames(i) == myname) THEN
@@ -536,7 +541,7 @@ MODULE flux_calculator_basic
             IF (varnames(i) == 'RSID')    idx_RSID = i    ! Radiation flux (shortwave indirect downward, neg. val.)  (W/m2)
             IF (varnames(i) == 'RSIU')    idx_RSIU = i    ! Radiation flux (shortwave indirect upward)               (W/m2)
             IF (varnames(i) == 'RSIN')    idx_RSIN = i    ! Radiation flux (shortwave indirect net upward)           (W/m2)
-            IF (varnames(i) == 'RSDD')    idx_RSID = i    ! Radiation flux (shortwave directed downward, neg. val.)  (W/m2)
+            IF (varnames(i) == 'RSDD')    idx_RSDD = i    ! Radiation flux (shortwave directed downward, neg. val.)  (W/m2)
             IF (varnames(i) == 'UMOM')    idx_UMOM = i    ! Upward flux of eastward momentum                         (N/m2)
             IF (varnames(i) == 'VMOM')    idx_VMOM = i    ! Upward flux of northward momentum                        (N/m2)
         ENDDO

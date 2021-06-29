@@ -16,14 +16,15 @@ module flux_library
 
   ! import flux calculation functions from different modules:
   !   mass fluxes
-  use flux_mass_evap,             only: flux_mass_evap_cclm
+  use flux_mass_evap,                 only: flux_mass_evap_cclm
   !   heat fluxes
-  use flux_heat_latent,           only: flux_heat_latent_ice, flux_heat_latent_water
-  use flux_heat_sensible,         only: flux_heat_sensible_cclm
+  use flux_heat_latent,               only: flux_heat_latent_ice, flux_heat_latent_water
+  use flux_heat_sensible,             only: flux_heat_sensible_cclm
   !   radiation fluxes
-  use flux_radiation_blackbody,   only: flux_radiation_blackbody_StBo
+  use flux_radiation_blackbody,       only: flux_radiation_blackbody_StBo
+  use distribute_radiation_flux_mod,  only: distribute_radiation_flux
   !   momentum fluxes
-  use flux_momentum,              only: flux_momentum_cclm
+  use flux_momentum,                  only: flux_momentum_cclm
 
   implicit none ; private
 
@@ -34,6 +35,7 @@ module flux_library
   public flux_mass_evap_cclm
   public flux_momentum_cclm
   public flux_radiation_blackbody_StBo
+  public distribute_radiation_flux
   public spec_vapor_surface_cclm
 
 !contains

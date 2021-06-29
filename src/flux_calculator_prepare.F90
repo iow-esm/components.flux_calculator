@@ -252,4 +252,31 @@ MODULE flux_calculator_prepare
             CALL do_prepare_calculation(missing_field, idx_RBBR, myvarname, surface_type, which_grid, method, grid_size, local_field)
         ENDIF
     END SUBROUTINE prepare_flux_radiation_blackbody
+
+    ! SUBROUTINE prepare_distribute_radiation_flux(surface_type, which_grid, method, grid_size, local_field) 
+    !     INTEGER,                                  INTENT(IN)    :: surface_type         
+    !     INTEGER,                                  INTENT(IN)    :: which_grid           ! 1=t_grid, 2=u_grid, 3=v_grid
+    !     CHARACTER(len=20),                        INTENT(IN)    :: method              
+    !     INTEGER,                                  INTENT(IN)    :: grid_size            ! to allocate the array to the correct size
+    !     TYPE(local_fields_type), DIMENSION(0:,:), INTENT(INOUT) :: local_field          ! pass the entire field because method can be "copy"
+    !     CHARACTER(len=4), PARAMETER :: myvarname = 'RBBR'
+    !     CHARACTER(len=200)          :: missing_field
+    !     missing_field=''
+    !     IF (trim(method) /= 'none') THEN 
+    !         IF (trim(method)=='copy') THEN ! copy from surface_type=1
+    !             IF (.NOT. ASSOCIATED( local_field(1,which_grid)%var(idx_RSDD)%field )) missing_field=myvarname//' for surface_type=1 '
+    !         ELSEIF (trim(method)=='zero') THEN
+    !             ! nothing to be done
+    !         ELSEIF (trim(method)=='test') THEN 
+    !             IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_RSDD)%field )) missing_field=trim(missing_field)//' RSDD'
+    !             IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_ALBE)%field )) missing_field=trim(missing_field)//' ALBE'
+    !             IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_FARE)%field )) missing_field=trim(missing_field)//' FARE'
+    !         ELSE
+    !             WRITE (w_unit,*) "Error calculating ",myvarname," for surface_type ",surface_type," on the grid ",grid_name(which_grid),":"
+    !             WRITE (w_unit,*) "    Method ",method," is not known. "
+    !             CALL mpi_finalize(1)
+    !         ENDIF
+    !         CALL do_prepare_calculation(missing_field, idx_RSDD, myvarname, surface_type, which_grid, method, grid_size, local_field)
+    !     ENDIF
+    ! END SUBROUTINE prepare_distribute_radiation_flux
 END MODULE flux_calculator_prepare

@@ -249,6 +249,27 @@ MODULE flux_calculator_calculate
         CALL average_across_surface_types(1,idx_RBBR,num_surface_types,grid_size,local_field)
     END SUBROUTINE calc_flux_radiation_blackbody
 
+    SUBROUTINE distribute_shortwave_radiation_flux(my_bottom_model, num_surface_types, grid_size, local_field) 
+        ! calculates blackbody radiation on t_grid
+        INTEGER,                                  INTENT(IN)    :: my_bottom_model
+        INTEGER,                                  INTENT(IN)    :: num_surface_types
+        INTEGER,                 DIMENSION(:),    INTENT(IN)    :: grid_size
+        TYPE(local_fields_type), DIMENSION(0:,:), INTENT(INOUT) :: local_field
+        INTEGER                     :: i, j
+
+        DO i=1,num_surface_types
+            local_field(i,1)%var(idx_RSDD)%field(:) = 0.0
+            DO j=1,grid_size(1) 
+                CALL distribute_radiation_flux(local_field(i,1)%var(idx_RSDD)%field(j), &
+                                                    local_field(0,1)%var(idx_RSDD)%field(j), &
+                                                    local_field(0,1)%var(idx_ALBE)%field(j), &
+                                                    local_field(i,1)%var(idx_ALBE)%field(j), &
+                                                    local_field(i,1)%var(idx_FARE)%field(j))
+            ENDDO
+        ENDDO
+        !CALL average_across_surface_types(1,idx_RSDD,num_surface_types,grid_size,local_field)
+    END SUBROUTINE distribute_shortwave_radiation_flux
+
     !!!!!!!!!! AVERAGING ROUTINE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     SUBROUTINE average_across_surface_types(which_grid, my_idx, num_surface_types, grid_size, local_field)

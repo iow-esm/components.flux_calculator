@@ -621,6 +621,12 @@ ENDIF
   ENDDO
   CALL prepare_regridding(idx_RBBR, 0, local_field, my_bottom_model, regrid_u_to_t, regrid_v_to_t, regrid_t_to_u, regrid_t_to_v, grid_size)
 
+  ! ! RSDD: redistribution on different surface types
+  ! DO i=1,num_surface_types
+  !   CALL prepare_distribute_radiation_flux(i, 1, 'test', grid_size(1), local_field) ! RSDD on t_grid
+  ! ENDDO
+  ! CALL prepare_regridding(idx_RSDD, 0, local_field, my_bottom_model, regrid_u_to_t, regrid_v_to_t, regrid_t_to_u, regrid_t_to_v, grid_size)
+  
   ! MOMENTUM FLUXES
   !   UMOM:
   DO i=1,num_surface_types
@@ -947,6 +953,9 @@ ENDIF
     CALL do_regridding(idx_UMOM, 0, local_field, regrid_u_to_t_matrix, regrid_v_to_t_matrix, regrid_t_to_u_matrix, regrid_t_to_v_matrix)
     CALL calc_flux_momentum_north(my_bottom_model, num_surface_types, 3, which_flux_momentum, grid_size, local_field)
     CALL do_regridding(idx_VMOM, 0, local_field, regrid_u_to_t_matrix, regrid_v_to_t_matrix, regrid_t_to_u_matrix, regrid_t_to_v_matrix)
+
+    CALL distribute_shortwave_radiation_flux(my_bottom_model, num_surface_types, grid_size, local_field)
+    !CALL do_regridding(idx_RSDD, 0, local_field, regrid_u_to_t_matrix, regrid_v_to_t_matrix, regrid_t_to_u_matrix, regrid_t_to_v_matrix)
 
 
     !#############################################################################

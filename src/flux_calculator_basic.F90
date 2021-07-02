@@ -39,9 +39,9 @@ MODULE flux_calculator_basic
     ! (3) declare idx_varname                                      !
     ! (4) add a line in init_varname_idx                           !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    INTEGER, PARAMETER                                   :: MAX_VARNAMES = 30
+    INTEGER, PARAMETER                                   :: MAX_VARNAMES = 31
     CHARACTER(len=4), PARAMETER, DIMENSION(MAX_VARNAMES) :: varnames = [ &
-        'ALBE', 'AMOI', 'AMOM', 'FARE', 'FICE', 'PATM', 'PSUR', &
+        'ALBE', 'ALBA', 'AMOI', 'AMOM', 'FARE', 'FICE', 'PATM', 'PSUR', &
         'QATM', 'TATM', 'TSUR', 'UATM', 'VATM', 'U10M', 'V10M', &  ! variables read in
         'QSUR',                                                 &  ! auxiliary variables calculated
         'HLAT', 'HSEN',                                         &  ! heat fluxes
@@ -49,7 +49,7 @@ MODULE flux_calculator_basic
         'RBBR', 'RLWD', 'RLWU', 'RSID', 'RSIU', 'RSIN', 'RSDD', &  ! radiation fluxes, the last are: Shortwave_Indirect_Down, Shortwave_Indirect_Up, Shortwave_Indirect_Net, Shortwave_Direct_Down
         'UMOM', 'VMOM']                                            ! momentum fluxes
 
-    INTEGER :: idx_ALBE, idx_AMOI, idx_AMOM, idx_FARE, idx_FICE, idx_PATM, idx_PSUR
+    INTEGER :: idx_ALBE, idx_ALBA, idx_AMOI, idx_AMOM, idx_FARE, idx_FICE, idx_PATM, idx_PSUR
     INTEGER :: idx_QATM, idx_TATM, idx_TSUR, idx_UATM, idx_VATM, idx_U10M, idx_V10M
     INTEGER :: idx_QSUR
     INTEGER :: idx_HLAT, idx_HSEN
@@ -133,7 +133,7 @@ MODULE flux_calculator_basic
                     input_field(num_input_fields)%which_grid = which_grid
                     input_field(num_input_fields)%field => local_field%var(i)%field
                     input_field(num_input_fields)%early=.FALSE.
-                    IF ((myname=="FARE") .OR. (myname=="TSUR") .OR. (myname=="FICE") .OR. ((myname=="ALBE") .AND. (my_letter /= 'A'))) THEN
+                    IF ((myname=="FARE") .OR. (myname=="TSUR") .OR. (myname=="ALBE")) THEN
                         input_field(num_input_fields)%early=.TRUE.
                     ENDIF
                     input_field(num_input_fields)%surface_type = surface_type
@@ -173,11 +173,6 @@ MODULE flux_calculator_basic
         DO i=1,num_input_fields
           IF (trim(input_field(i)%name)=="R"//my_letter//myname//appendstring) found=.TRUE.
         ENDDO
-        IF (found) THEN
-            IF((trim(myname) == "ALBE") .AND. (trim(my_letter) == 'A')) THEN
-                found = .FALSE.
-            ENDIF
-        ENDIF
         IF (.NOT. found) THEN ! Okay field does not come as input
             DO i=1,MAX_VARNAMES
                 IF (varnames(i) == myname) THEN
@@ -258,6 +253,8 @@ MODULE flux_calculator_basic
                         IF ((myname=="RBBR") .OR. (myname=="TSUR") .OR. (myname=="FICE") .OR. (myname=="ALBE")) THEN
                             output_field(num_output_fields)%early=.TRUE.
                         ENDIF
+                        output_field(num_output_fields)%surface_type = surface_type
+                        output_field(num_output_fields)%idx = i
                     ENDIF
                 ENDIF
             ENDDO
@@ -513,6 +510,7 @@ MODULE flux_calculator_basic
         DO i=1,MAX_VARNAMES
             ! INPUT VARIABLES:
             IF (varnames(i) == 'ALBE')    idx_ALBE = i    ! Albedo of the surface                                    (1)
+            IF (varnames(i) == 'ALBA')    idx_ALBA = i    ! averaged Albedo from atmosphere                          (1)
             IF (varnames(i) == 'AMOI')    idx_AMOI = i    ! Diffusion coefficient for moisture                       (1)
             IF (varnames(i) == 'AMOM')    idx_AMOM = i    ! Diffusion coefficient for momentum                       (1)
             IF (varnames(i) == 'FARE')    idx_FARE = i    ! Fraction of grid cell area covered by this surface_type  (1)

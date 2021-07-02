@@ -262,7 +262,7 @@ MODULE flux_calculator_calculate
             DO j=1,grid_size(1) 
                 CALL distribute_radiation_flux(local_field(i,1)%var(idx_RSDD)%field(j), &
                                                     local_field(0,1)%var(idx_RSDD)%field(j), &
-                                                    local_field(0,1)%var(idx_ALBE)%field(j), &
+                                                    local_field(0,1)%var(idx_ALBA)%field(j), &
                                                     local_field(i,1)%var(idx_ALBE)%field(j), &
                                                     local_field(i,1)%var(idx_FARE)%field(j))
             ENDDO
@@ -281,6 +281,7 @@ MODULE flux_calculator_calculate
         INTEGER                                                 :: i,j
         
         IF (local_field(0,1)%var(my_idx)%allocated) THEN
+            WRITE (w_unit,*) "Really averaging"
             local_field(0,1)%var(my_idx)%field=0.0
             DO i=1,num_surface_types
                 DO j=1,grid_size(which_grid)

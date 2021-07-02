@@ -250,7 +250,7 @@ MODULE flux_calculator_calculate
     END SUBROUTINE calc_flux_radiation_blackbody
 
     SUBROUTINE distribute_shortwave_radiation_flux(my_bottom_model, num_surface_types, grid_size, local_field) 
-        ! calculates blackbody radiation on t_grid
+        ! redistributes an averaged shortwave radiation on different surface types
         INTEGER,                                  INTENT(IN)    :: my_bottom_model
         INTEGER,                                  INTENT(IN)    :: num_surface_types
         INTEGER,                 DIMENSION(:),    INTENT(IN)    :: grid_size
@@ -258,7 +258,6 @@ MODULE flux_calculator_calculate
         INTEGER                     :: i, j
 
         DO i=1,num_surface_types
-            local_field(i,1)%var(idx_RSDD)%field(:) = 0.0
             DO j=1,grid_size(1) 
                 CALL distribute_radiation_flux(local_field(i,1)%var(idx_RSDD)%field(j), &
                                                     local_field(0,1)%var(idx_RSDD)%field(j), &

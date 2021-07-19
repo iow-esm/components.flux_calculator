@@ -884,6 +884,13 @@ ENDIF
     DO i=1,3  ! loop over grids
       DO j=1,num_output_fields
         IF ((output_field(j)%which_grid==i) .AND. (output_field(j)%early==.TRUE.)) THEN
+          IF (output_field(j)%surface_type == 0) THEN
+            IF (ASSOCIATED(local_field(0,i)%var(output_field(j)%idx)%field) .AND. &
+                ASSOCIATED(local_field(2,i)%var(output_field(j)%idx)%field) ) THEN
+              WRITE (w_unit,*) ' Averaging ',output_field(j)%name,' at runtime=',current_time,' seconds.'
+              CALL average_across_surface_types(i,output_field(j)%idx,num_surface_types,grid_size,local_field)
+            ENDIF
+          ENDIF
           IF (verbosity_level >= 2) THEN
             WRITE (w_unit,*) '  try to put ',output_field(j)%name,' at runtime=',current_time,' seconds.'
             WRITE(w_unit,*) '      range = ',MINVAL(output_field(j)%field),MAXVAL(output_field(j)%field)
@@ -965,6 +972,13 @@ ENDIF
     DO i=1,3  ! loop over grids
       DO j=1,num_output_fields
         IF ((output_field(j)%which_grid==i) .AND. (output_field(j)%early==.FALSE.)) THEN
+          IF (output_field(j)%surface_type == 0) THEN
+            IF (ASSOCIATED(local_field(0,i)%var(output_field(j)%idx)%field) .AND. &
+                ASSOCIATED(local_field(2,i)%var(output_field(j)%idx)%field) ) THEN
+              CALL average_across_surface_types(i,output_field(j)%idx,num_surface_types,grid_size,local_field)
+              WRITE (w_unit,*) ' Averaging ',output_field(j)%name,' at runtime=',current_time,' seconds.'
+            ENDIF
+          ENDIF
           IF (verbosity_level >= 2) THEN
             WRITE (w_unit,*) '  try to put ',output_field(j)%name,' at runtime=',current_time,' seconds.'
             WRITE(w_unit,*) '      range = ',MINVAL(output_field(j)%field),MAXVAL(output_field(j)%field)

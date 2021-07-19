@@ -259,7 +259,7 @@ MODULE flux_calculator_calculate
 
         DO i=1,num_surface_types
             DO j=1,grid_size(1) 
-                CALL distribute_radiation_flux(local_field(i,1)%var(idx_RSDD)%field(j), &
+                CALL distribute_radiation_flux(local_field(i,1)%var(idx_RSDR)%field(j), &
                                                     local_field(0,1)%var(idx_RSDD)%field(j), &
                                                     local_field(0,1)%var(idx_ALBA)%field(j), &
                                                     local_field(i,1)%var(idx_ALBE)%field(j), &

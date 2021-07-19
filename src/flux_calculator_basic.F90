@@ -39,14 +39,14 @@ MODULE flux_calculator_basic
     ! (3) declare idx_varname                                      !
     ! (4) add a line in init_varname_idx                           !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    INTEGER, PARAMETER                                   :: MAX_VARNAMES = 31
+    INTEGER, PARAMETER                                   :: MAX_VARNAMES = 32
     CHARACTER(len=4), PARAMETER, DIMENSION(MAX_VARNAMES) :: varnames = [ &
         'ALBE', 'ALBA', 'AMOI', 'AMOM', 'FARE', 'FICE', 'PATM', 'PSUR', &
         'QATM', 'TATM', 'TSUR', 'UATM', 'VATM', 'U10M', 'V10M', &  ! variables read in
         'QSUR',                                                 &  ! auxiliary variables calculated
         'HLAT', 'HSEN',                                         &  ! heat fluxes
         'MEVA', 'MPRE', 'MRAI', 'MSNO',                         &  ! mass fluxes
-        'RBBR', 'RLWD', 'RLWU', 'RSID', 'RSIU', 'RSIN', 'RSDD', &  ! radiation fluxes, the last are: Shortwave_Indirect_Down, Shortwave_Indirect_Up, Shortwave_Indirect_Net, Shortwave_Direct_Down
+        'RBBR', 'RLWD', 'RLWU', 'RSID', 'RSIU', 'RSIN', 'RSDD', 'RSDR', &  ! radiation fluxes, the last are: Shortwave_Indirect_Down, Shortwave_Indirect_Up, Shortwave_Indirect_Net, Shortwave_Direct_Down
         'UMOM', 'VMOM']                                            ! momentum fluxes
 
     INTEGER :: idx_ALBE, idx_ALBA, idx_AMOI, idx_AMOM, idx_FARE, idx_FICE, idx_PATM, idx_PSUR
@@ -54,7 +54,7 @@ MODULE flux_calculator_basic
     INTEGER :: idx_QSUR
     INTEGER :: idx_HLAT, idx_HSEN
     INTEGER :: idx_MEVA, idx_MPRE, idx_MRAI, idx_MSNO
-    INTEGER :: idx_RBBR, idx_RLWD, idx_RLWU, idx_RSID, idx_RSIU, idx_RSIN, idx_RSDD
+    INTEGER :: idx_RBBR, idx_RLWD, idx_RLWU, idx_RSID, idx_RSIU, idx_RSIN, idx_RSDD, idx_RSDR
     INTEGER :: idx_UMOM, idx_VMOM
 
     CHARACTER(len=2), DIMENSION(0:MAX_SURFACE_TYPES)  :: numtype
@@ -540,6 +540,7 @@ MODULE flux_calculator_basic
             IF (varnames(i) == 'RSIU')    idx_RSIU = i    ! Radiation flux (shortwave indirect upward)               (W/m2)
             IF (varnames(i) == 'RSIN')    idx_RSIN = i    ! Radiation flux (shortwave indirect net upward)           (W/m2)
             IF (varnames(i) == 'RSDD')    idx_RSDD = i    ! Radiation flux (shortwave directed downward, neg. val.)  (W/m2)
+            IF (varnames(i) == 'RSDR')    idx_RSDR = i    ! Radiation flux redistributed on surface types (shortwave directed downward, neg. val.)  (W/m2)
             IF (varnames(i) == 'UMOM')    idx_UMOM = i    ! Upward flux of eastward momentum                         (N/m2)
             IF (varnames(i) == 'VMOM')    idx_VMOM = i    ! Upward flux of northward momentum                        (N/m2)
         ENDDO

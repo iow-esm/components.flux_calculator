@@ -7,6 +7,10 @@ source ../../local_scripts/identify_target.sh $target $debug $fast
 # component to build
 component="flux_calculator"
 
+# create component's directory (if not existing)
+echo ssh -t "${user_at_dest}" "mkdir -p ${dest_folder}/components/${component}"
+ssh -t "${user_at_dest}" "mkdir -p ${dest_folder}/components/${component}"
+
 # deploy the code from local source
 echo rsync -r -i -u src ${dest}/components/${component}/.
 echo rsync -i -u start_build_${target}.sh ${dest}/components/${component}/

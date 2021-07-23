@@ -43,6 +43,33 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build_flux_calculator_hlrng",
+            "type": "shell",
+            "command": "cd ${workspaceRoot}/../; ./build.sh hlrng",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": {
+                "owner": "ifort",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^../src/(.*?)\\((.*?)\\): (warning|error) (.*)",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            }
+        },
+        {
             "label": "build_flux_calculator_haumea",
             "type": "shell",
             "command": "cd ${workspaceRoot}/../; ./build.sh haumea",
@@ -96,6 +123,20 @@
                 }
             }
         },
+        {
+            "label": "run_IOW_ESM_hlrng",
+            "type": "shell",
+            "command": "cd ${workspaceRoot}/../../../; ./run.sh hlrng",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
 	    {
             "label": "run_IOW_ESM_haumea",
             "type": "shell",

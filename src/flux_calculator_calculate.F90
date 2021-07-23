@@ -77,7 +77,7 @@ MODULE flux_calculator_calculate
                 ENDIF
             ENDIF
         ENDDO
-        CALL average_across_surface_types(1,idx_MEVA,num_surface_types,grid_size,local_field)
+        !CALL average_across_surface_types(1,idx_MEVA,num_surface_types,grid_size,local_field)
     END SUBROUTINE calc_flux_mass_evap
 
     !!!!!!!!!! HEAT FLUXES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -111,7 +111,7 @@ MODULE flux_calculator_calculate
                 ENDIF
             ENDIF
         ENDDO
-        CALL average_across_surface_types(1,idx_HLAT,num_surface_types,grid_size,local_field)
+        !CALL average_across_surface_types(1,idx_HLAT,num_surface_types,grid_size,local_field)
     END SUBROUTINE calc_flux_heat_latent
 
     SUBROUTINE calc_flux_heat_sensible(my_bottom_model, num_surface_types, methods, grid_size, local_field) 
@@ -145,7 +145,7 @@ MODULE flux_calculator_calculate
                 ENDIF
             ENDIF
         ENDDO
-        CALL average_across_surface_types(1,idx_HSEN,num_surface_types,grid_size,local_field)
+        !CALL average_across_surface_types(1,idx_HSEN,num_surface_types,grid_size,local_field)
     END SUBROUTINE calc_flux_heat_sensible
 
     !!!!!!!!!! MOMENTUM FLUXES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -182,7 +182,7 @@ MODULE flux_calculator_calculate
                 ENDIF
             ENDIF
         ENDDO
-        CALL average_across_surface_types(1,idx_UMOM,num_surface_types,grid_size,local_field)
+        !CALL average_across_surface_types(1,idx_UMOM,num_surface_types,grid_size,local_field)
     END SUBROUTINE calc_flux_momentum_east
 
     SUBROUTINE calc_flux_momentum_north(my_bottom_model, num_surface_types, which_grid, methods, grid_size, local_field) 
@@ -217,7 +217,7 @@ MODULE flux_calculator_calculate
                 ENDIF
             ENDIF
         ENDDO
-        CALL average_across_surface_types(1,idx_VMOM,num_surface_types,grid_size,local_field)
+        !CALL average_across_surface_types(1,idx_VMOM,num_surface_types,grid_size,local_field)
     END SUBROUTINE calc_flux_momentum_north
 
     !!!!!!!!!! RADIATION FLUXES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -246,7 +246,7 @@ MODULE flux_calculator_calculate
                 ENDIF
             ENDIF
         ENDDO
-        CALL average_across_surface_types(1,idx_RBBR,num_surface_types,grid_size,local_field)
+        !CALL average_across_surface_types(1,idx_RBBR,num_surface_types,grid_size,local_field)
     END SUBROUTINE calc_flux_radiation_blackbody
 
     SUBROUTINE distribute_shortwave_radiation_flux(my_bottom_model, num_surface_types, grid_size, local_field) 
@@ -279,13 +279,12 @@ MODULE flux_calculator_calculate
         TYPE(local_fields_type), DIMENSION(0:,:), INTENT(INOUT) :: local_field
         INTEGER                                                 :: i,j
         
-        IF (local_field(0,1)%var(my_idx)%allocated) THEN
-            WRITE (w_unit,*) "Really averaging"
-            local_field(0,1)%var(my_idx)%field=0.0
+        IF (local_field(0,which_grid)%var(my_idx)%allocated) THEN
+            local_field(0,which_grid)%var(my_idx)%field=0.0
             DO i=1,num_surface_types
                 DO j=1,grid_size(which_grid)
-                    local_field(0,1)%var(my_idx)%field(j) = local_field(0,1)%var(my_idx)%field(j) + &
-                                                            local_field(i,1)%var(my_idx)%field(j)*local_field(i,1)%var(idx_FARE)%field(j)
+                    local_field(0,which_grid)%var(my_idx)%field(j) = local_field(0,which_grid)%var(my_idx)%field(j) + &
+                                                            local_field(i,which_grid)%var(my_idx)%field(j)*local_field(i,which_grid)%var(idx_FARE)%field(j)
                 ENDDO
             ENDDO
         ENDIF

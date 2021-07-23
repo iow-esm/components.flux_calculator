@@ -689,8 +689,13 @@ ENDIF
     myname = name_send_t(j)
     IF (trim(myname) /= 'none') THEN  
       IF (send_to_atmos_t(j)) THEN
-        CALL add_output_field(myname, 'A', 0, 1, num_surface_types, grid_size(1), .TRUE., val_flux_t(j), &
+        IF (send_to_bottom_t(my_bottom_model,j)) THEN
+          CALL add_output_field(myname, 'A', 0, 1, num_surface_types, grid_size(1), send_uniform_t(my_bottom_model,j), val_flux_t(j), &
+          local_field, num_input_fields, input_field, num_output_fields, output_field)
+        ELSE
+          CALL add_output_field(myname, 'A', 0, 1, num_surface_types, grid_size(1), .FALSE., val_flux_t(j), &
                               local_field, num_input_fields, input_field, num_output_fields, output_field)
+        ENDIF
       ENDIF 
       IF (send_to_bottom_t(my_bottom_model,j)) THEN
         IF (send_uniform_t(my_bottom_model,j)) THEN
@@ -707,8 +712,13 @@ ENDIF
     myname = name_send_u(j)
     IF (trim(myname) /= 'none') THEN  
       IF (send_to_atmos_u(j)) THEN
-        CALL add_output_field(myname, 'A', 0, 2, num_surface_types, grid_size(2), .TRUE., val_flux_u(j), &
+        IF (send_to_bottom_u(my_bottom_model,j)) THEN
+          CALL add_output_field(myname, 'A', 0, 2, num_surface_types, grid_size(2), send_uniform_u(my_bottom_model,j), val_flux_u(j), &
                               local_field, num_input_fields, input_field, num_output_fields, output_field)
+        ELSE
+          CALL add_output_field(myname, 'A', 0, 2, num_surface_types, grid_size(2), .TRUE., val_flux_u(j), &
+                              local_field, num_input_fields, input_field, num_output_fields, output_field)
+        ENDIF
       ENDIF 
       IF (send_to_bottom_u(my_bottom_model,j)) THEN
         IF (send_uniform_u(my_bottom_model,j)) THEN
@@ -725,8 +735,13 @@ ENDIF
     myname = name_send_v(j)
     IF (trim(myname) /= 'none') THEN  
       IF (send_to_atmos_v(j)) THEN
-        CALL add_output_field(myname, 'A', 0, 3, num_surface_types, grid_size(3), .TRUE., val_flux_v(j), &
+        IF (send_to_bottom_v(my_bottom_model,j)) THEN
+          CALL add_output_field(myname, 'A', 0, 3, num_surface_types, grid_size(3), send_uniform_v(my_bottom_model,j), val_flux_v(j), &
+          local_field, num_input_fields, input_field, num_output_fields, output_field)
+        ELSE
+          CALL add_output_field(myname, 'A', 0, 3, num_surface_types, grid_size(3), .TRUE., val_flux_v(j), &
                               local_field, num_input_fields, input_field, num_output_fields, output_field)
+        ENDIF
       ENDIF 
       IF (send_to_bottom_v(my_bottom_model,j)) THEN
         IF (send_uniform_v(my_bottom_model,j)) THEN
@@ -975,8 +990,8 @@ ENDIF
           IF (output_field(j)%surface_type == 0) THEN
             IF (ASSOCIATED(local_field(0,i)%var(output_field(j)%idx)%field) .AND. &
                 ASSOCIATED(local_field(2,i)%var(output_field(j)%idx)%field) ) THEN
-              CALL average_across_surface_types(i,output_field(j)%idx,num_surface_types,grid_size,local_field)
               WRITE (w_unit,*) ' Averaging ',output_field(j)%name,' at runtime=',current_time,' seconds.'
+              CALL average_across_surface_types(i,output_field(j)%idx,num_surface_types,grid_size,local_field)
             ENDIF
           ENDIF
           IF (verbosity_level >= 2) THEN

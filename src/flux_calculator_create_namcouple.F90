@@ -138,22 +138,7 @@ MODULE flux_calculator_create_namcouple
         ENDDO
 
         CLOSE(w_namcouple)
-
-        CALL SYSTEM("cp "//namcouple_filename//" ../"//TRIM(name_atmos_model)//"/")
-        WRITE(w_unit,*) "cp "//namcouple_filename//" ../"//TRIM(name_atmos_model)//"/"
-        ! IF(sys_status /= 0) THEN
-        !     WRITE(w_unit,*) "cp "//namcouple_filename//" ../"//name_atmos_model//"/"
-        ! ENDIF
-        DO i = 1, MAX_BOTTOM_MODELS
-            IF (name_bottom_model(i) /= '') THEN
-                CALL SYSTEM("cp "//namcouple_filename//" ../"//TRIM(name_bottom_model(i))//"/")
-                WRITE(w_unit,*) "cp "//namcouple_filename//" ../"//TRIM(name_bottom_model(i))//"/"
-        !         IF(sys_status /= 0) THEN
-        !             WRITE(w_unit,*) "cp "//namcouple_filename//" ../"//name_bottom_model(i)//"/"
-        !         ENDIF
-            ENDIF
-        ENDDO
-
+        
     END SUBROUTINE create_namcouple
 
 END MODULE flux_calculator_create_namcouple

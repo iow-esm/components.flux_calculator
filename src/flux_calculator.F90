@@ -17,7 +17,6 @@ PROGRAM flux_calculator
 
   ! Use OASIS communication library
   USE mod_oasis
-  USE mod_oasis_data, only: oasis_debug
 
   IMPLICIT NONE
   INCLUDE 'mpif.h'
@@ -35,8 +34,6 @@ PROGRAM flux_calculator
   CHARACTER(len=50), PARAMETER   :: regrid_t_to_u_filename='mappings/regrid_t_grid_to_u_grid.nc'
   CHARACTER(len=50), PARAMETER   :: regrid_v_to_t_filename='mappings/regrid_v_grid_to_t_grid.nc'
   CHARACTER(len=50), PARAMETER   :: regrid_t_to_v_filename='mappings/regrid_t_grid_to_v_grid.nc'
-
-  INTEGER :: verbosity_level = 2   ! 1 = standard, 2 = debug output
 
   ! General MPI and output variables
   INTEGER :: mype, npes ! rank and  number of pe
@@ -851,8 +848,10 @@ ENDIF
   
   DO n_timestep = 1,num_timesteps
     current_time = (n_timestep - 1) * timestep
-    WRITE (w_unit,*) 'Time since start = ',current_time,' seconds.'
-    CALL FLUSH(w_unit)
+    IF (verbosity_level >= VERBOSITY_LEVEL_STANDARD) THEN
+      WRITE (w_unit,*) 'Time since start = ',current_time,' seconds.'
+      CALL FLUSH(w_unit)
+    ENDIF
 
     CALL MPI_BARRIER(MPI_COMM_WORLD, i) 
     !#############################################################################
@@ -862,11 +861,11 @@ ENDIF
     DO i=1,3  ! loop over grids
       DO j=1,num_input_fields
         IF ((input_field(j)%which_grid==i) .AND. (input_field(j)%early==.TRUE.)) THEN
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE (w_unit,*) '  try to get ',input_field(j)%name,' at runtime=',current_time,' seconds.'
           ENDIF
           CALL oasis_get(input_field(j)%id, current_time, input_field(j)%field, ierror)
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE(w_unit,*) '  received  ',input_field(j)%name,' at runtime=',current_time,' seconds:'
             WRITE(w_unit,*) '      range = ',MINVAL(input_field(j)%field),MAXVAL(input_field(j)%field)
           ENDIF
@@ -902,16 +901,18 @@ ENDIF
           IF (output_field(j)%surface_type == 0) THEN
             IF (ASSOCIATED(local_field(0,i)%var(output_field(j)%idx)%field) .AND. &
                 ASSOCIATED(local_field(2,i)%var(output_field(j)%idx)%field) ) THEN
-              WRITE (w_unit,*) ' Averaging ',output_field(j)%name,' at runtime=',current_time,' seconds.'
+              IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
+                WRITE (w_unit,*) ' Averaging ',output_field(j)%name,' at runtime=',current_time,' seconds.'
+              ENDIF
               CALL average_across_surface_types(i,output_field(j)%idx,num_surface_types,grid_size,local_field)
             ENDIF
           ENDIF
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE (w_unit,*) '  try to put ',output_field(j)%name,' at runtime=',current_time,' seconds.'
             WRITE(w_unit,*) '      range = ',MINVAL(output_field(j)%field),MAXVAL(output_field(j)%field)
           ENDIF
           CALL oasis_put(output_field(j)%id, current_time, output_field(j)%field, ierror)
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE(w_unit,*) '  sent        ',output_field(j)%name,' at runtime=',current_time,' seconds:'
           ENDIF
           IF ( ierror .NE. OASIS_Ok .AND. ierror .LT. OASIS_Recvd) THEN
@@ -930,11 +931,11 @@ ENDIF
     DO i=1,3  ! loop over grids
       DO j=1,num_input_fields
         IF ((input_field(j)%which_grid==i) .AND. (input_field(j)%early==.FALSE.)) THEN
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE (w_unit,*) '  try to get ',input_field(j)%name,' at runtime=',current_time,' seconds.'
           ENDIF
           CALL oasis_get(input_field(j)%id, current_time, input_field(j)%field, ierror)
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE(w_unit,*) '  received  ',input_field(j)%name,' at runtime=',current_time,' seconds:'
             WRITE(w_unit,*) '      range = ',MINVAL(input_field(j)%field),MAXVAL(input_field(j)%field)
           ENDIF
@@ -990,16 +991,18 @@ ENDIF
           IF (output_field(j)%surface_type == 0) THEN
             IF (ASSOCIATED(local_field(0,i)%var(output_field(j)%idx)%field) .AND. &
                 ASSOCIATED(local_field(2,i)%var(output_field(j)%idx)%field) ) THEN
-              WRITE (w_unit,*) ' Averaging ',output_field(j)%name,' at runtime=',current_time,' seconds.'
+              IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
+                WRITE (w_unit,*) ' Averaging ',output_field(j)%name,' at runtime=',current_time,' seconds.'
+              ENDIF
               CALL average_across_surface_types(i,output_field(j)%idx,num_surface_types,grid_size,local_field)
             ENDIF
           ENDIF
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE (w_unit,*) '  try to put ',output_field(j)%name,' at runtime=',current_time,' seconds.'
             WRITE(w_unit,*) '      range = ',MINVAL(output_field(j)%field),MAXVAL(output_field(j)%field)
           ENDIF
           CALL oasis_put(output_field(j)%id, current_time, output_field(j)%field, ierror)
-          IF (verbosity_level >= 2) THEN
+          IF (verbosity_level >= VERBOSITY_LEVEL_DEBUG) THEN
             WRITE(w_unit,*) '  sent        ',output_field(j)%name,' at runtime=',current_time,' seconds:'
           ENDIF
           IF ( ierror .NE. OASIS_Ok .AND. ierror .LT. OASIS_Recvd) THEN

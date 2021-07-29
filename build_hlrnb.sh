@@ -29,7 +29,7 @@ INCLUDES="-I ${OASIS3_LIB}/build/lib/mct \
           -I${IOW_ESM_NETCDF_INCLUDE}"
 LIBS="-lnetcdf -lnetcdff -L${IOW_ESM_NETCDF_LIBRARY}"
 if [ $debug == "debug" ]; then
-	FFLAGS="-O0 -r8 -fp-model precise -xHost -DUSE_DOUBLE_PRECISION -g -traceback -check all"
+	FFLAGS="-O0 -r8 -fp-model precise -xHost -DUSE_DOUBLE_PRECISION -g -traceback -check all -DIOW_ESM_DEBUG"
 else
 	FFLAGS="-O3 -r8 -no-prec-div -fp-model fast=2 -xHost -DUSE_DOUBLE_PRECISION"
 fi

@@ -62,6 +62,19 @@ MODULE flux_calculator_basic
     CHARACTER(len=6), DIMENSION(3) :: grid_name = ['t_grid', 'u_grid', 'v_grid']
 
     INTEGER :: w_unit  ! a logfile to write the progress and error messages
+
+      ! control amount of output
+    ENUM, BIND(c)
+        ENUMERATOR :: VERBOSITY_LEVEL_ERROR = 0
+        ENUMERATOR :: VERBOSITY_LEVEL_STANDARD
+        ENUMERATOR :: VERBOSITY_LEVEL_DEBUG
+    ENDENUM
+
+#ifdef IOW_ESM_DEBUG
+    INTEGER :: verbosity_level = VERBOSITY_LEVEL_DEBUG   ! 1 = standard, 2 = debug output
+#else
+    INTEGER :: verbosity_level = VERBOSITY_LEVEL_STANDARD   ! 1 = standard, 2 = debug output
+#endif
   
     TYPE integerarray
         INTEGER (kind=4), DIMENSION(:), POINTER :: field     

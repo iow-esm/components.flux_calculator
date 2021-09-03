@@ -57,6 +57,14 @@ MODULE flux_calculator_create_namcouple
 
         INTEGER :: i    ! counter
 
+        CHARACTER(len=8) :: export ! is EXPOUT or EXPORTED according to verbosity level
+
+        IF(verbosity_level > VERBOSITY_LEVEL_STANDARD) THEN
+            export = "EXPOUT"
+        ELSE
+            export = "EXPORTED"
+        ENDIF
+
         ! find out from or to which model this variable is received or sent
         IF (io_field%name(2:2) == 'A') THEN
             my_model_name = name_atmos_model
@@ -99,16 +107,11 @@ MODULE flux_calculator_create_namcouple
 
         ! write entry
         IF (my_io == 'R') THEN
-#ifdef IOW_ESM_DEBUG
-            WRITE(w_namcouple, '(A, A, A, A, I0, A)') counterpart, ' ', io_field%name, ' 1 ', timestep, ' 2 restart_flc_'//TRIM(io_field%name(3:6))//'_'//TRIM(my_model_name)//'.nc EXPOUT'
+            WRITE(w_namcouple, '(A, A, A, A, I0, A, A)') counterpart, ' ', io_field%name, ' 1 ', timestep, ' 2 restart_flc_'//TRIM(io_field%name(3:6))//'_'//TRIM(my_model_name)//'.nc ', TRIM(export)
         ELSE
-            WRITE(w_namcouple, '(A, A, A, A, I0, A)') io_field%name, ' ', counterpart, ' 1 ', timestep, ' 2 restart_flc_'//TRIM(io_field%name(3:6))//'_'//TRIM(my_model_name)//'.nc EXPOUT'
-#else
-            WRITE(w_namcouple, '(A, A, A, A, I0, A)') counterpart, ' ', io_field%name, ' 1 ', timestep, ' 2 restart_flc_'//TRIM(io_field%name(3:6))//'_'//TRIM(my_model_name)//'.nc EXPORTED'
-        ELSE
-            WRITE(w_namcouple, '(A, A, A, A, I0, A)') io_field%name, ' ', counterpart, ' 1 ', timestep, ' 2 restart_flc_'//TRIM(io_field%name(3:6))//'_'//TRIM(my_model_name)//'.nc EXPORTED'
-#endif
+            WRITE(w_namcouple, '(A, A, A, A, I0, A, A)') io_field%name, ' ', counterpart, ' 1 ', timestep, ' 2 restart_flc_'//TRIM(io_field%name(3:6))//'_'//TRIM(my_model_name)//'.nc ', TRIM(export)
         ENDIF
+
         WRITE(w_namcouple,*) remapping_info%src_grid_dims, remapping_info%dst_grid_dims, '___ ___ LAG=0'   ! TODO: get rid off string literals here
         WRITE(w_namcouple,*) "R 0 R 0"
         WRITE(w_namcouple,*) "LOCTRANS MAPPING"

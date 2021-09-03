@@ -105,6 +105,7 @@ PROGRAM flux_calculator
   CHARACTER(len=20), DIMENSION(MAX_BOTTOM_MODELS, MAX_SURFACE_TYPES) :: which_flux_radiation_blackbody = 'none'    ! 'none' 'StBo'                           -> RBBR
 
   NAMELIST /input/ timestep, num_timesteps,                                  &
+                   verbosity_level,                                          &
                    name_atmos_model,                                         &
                    name_bottom_model, letter_bottom_model,                   &
                    num_tasks_per_model,                                      &

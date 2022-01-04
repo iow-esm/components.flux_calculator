@@ -97,7 +97,7 @@ MODULE flux_calculator_calculate
             method = methods(my_bottom_model,i)
             IF (trim(method) /= 'none') THEN 
                 IF (trim(method)=='zero') THEN
-                    local_field(i,1)%var(idx_MEVA)%field(:) = 0.0
+                    local_field(i,1)%var(idx_HLAT)%field(:) = 0.0
                 ELSEIF (trim(method)=='water') THEN
                     DO j=1,grid_size(1) 
                         CALL flux_heat_latent_water(local_field(i,1)%var(idx_HLAT)%field(j), &
@@ -129,7 +129,7 @@ MODULE flux_calculator_calculate
             method = methods(my_bottom_model,i)
             IF (trim(method) /= 'none') THEN 
                 IF (trim(method)=='zero') THEN
-                    local_field(i,1)%var(idx_MEVA)%field(:) = 0.0
+                    local_field(i,1)%var(idx_HSEN)%field(:) = 0.0
                 ELSEIF (trim(method)=='CCLM') THEN
                     DO j=1,grid_size(1) 
                         CALL flux_heat_sensible_cclm(local_field(i,1)%var(idx_HSEN)%field(j), &
@@ -262,8 +262,7 @@ MODULE flux_calculator_calculate
                 CALL distribute_radiation_flux(local_field(i,1)%var(idx_RSDR)%field(j), &
                                                     local_field(0,1)%var(idx_RSDD)%field(j), &
                                                     local_field(0,1)%var(idx_ALBA)%field(j), &
-                                                    local_field(i,1)%var(idx_ALBE)%field(j), &
-                                                    local_field(i,1)%var(idx_FARE)%field(j))
+                                                    local_field(i,1)%var(idx_ALBE)%field(j))
             ENDDO
         ENDDO
         !CALL average_across_surface_types(1,idx_RSDD,num_surface_types,grid_size,local_field)

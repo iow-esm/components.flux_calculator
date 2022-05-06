@@ -272,9 +272,10 @@ ENDIF
   i=0   ! present pe
   j=1   ! present model
   k=1   ! present task per model
+  WRITE(w_unit,*) "num_tasks_per_model(1): ", num_tasks_per_model(1)
   DO WHILE (i < mype)
     IF (k < num_tasks_per_model(j)) THEN
-      k=k+1; j=j+1; i=i+1
+      k=k+1; i=i+1
     ELSE IF (k == num_tasks_per_model(j)) THEN
       k=1; j=j+1; i=i+1
     ENDIF

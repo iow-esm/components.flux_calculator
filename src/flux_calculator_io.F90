@@ -42,6 +42,10 @@ MODULE flux_calculator_io
         INTEGER                               :: nc              ! NetCDF file id
         INTEGER                               :: dimid_grid_size ! NetCDF dimension id
         INTEGER                               :: varid           ! NetCDF variable id
+
+
+        INTEGER                               :: i 
+        INTEGER, DIMENSION(:), allocatable    :: task
       
         CALL hdlerr(NF90_OPEN(grid_filename, NF90_NOWRITE, nc), __LINE__ )
         CALL hdlerr( NF90_INQ_DIMID(nc, 'grid_size' ,  dimid_grid_size),    __LINE__ )   ! get variable id
@@ -50,6 +54,7 @@ MODULE flux_calculator_io
         ALLOCATE(grid_lon%field(grid_size_global,1));  grid_lon%allocated = .TRUE.
         ALLOCATE(grid_lat%field(grid_size_global,1));  grid_lat%allocated = .TRUE.
         ALLOCATE(grid_area%field(grid_size_global,1)); grid_area%allocated = .TRUE.
+        
         
         CALL hdlerr( NF90_INQ_VARID(nc, 'grid_center_lon' ,  varid),    __LINE__ )                 ! get variable id
         CALL hdlerr( NF90_GET_VAR (nc, varid, grid_lon%field(:,1), [1], [grid_size_global]), __LINE__ ) ! get variable values
@@ -67,8 +72,37 @@ MODULE flux_calculator_io
                 num_grid_cells(1,1) = grid_size_global
                 grid_size           = grid_size_global
                 grid_offset         = 0
-            ENDIF
+            ELSEIF (num_tasks_per_model(1) > 1) THEN
+                num_grid_cells      = 0
+                grid_size = 0
+                grid_offset = -1
+                ALLOCATE(task(grid_size_global))
+                CALL hdlerr(NF90_OPEN(grid_filename, NF90_NOWRITE, nc), __LINE__ )
+                CALL hdlerr( NF90_INQ_VARID(nc, 'task' ,  varid),    __LINE__ )                 ! get variable id
+                CALL hdlerr( NF90_GET_VAR (nc, varid, task(:), [1], [grid_size_global]), __LINE__ ) ! get variable values 
+                CALL hdlerr(NF90_CLOSE(nc),    __LINE__ )
+                DO i = 1, grid_size_global
+                    IF (task(i) == mype) THEN
+                        grid_size = grid_size + 1
+                        IF (grid_offset == -1) THEN
+                            grid_offset = i-1 
+                        ENDIF
+                    ENDIF
+                ENDDO
+                IF (grid_size == 0 .OR. grid_offset == -1) THEN
+                    grid_size = 0
+                    grid_offset = 0
+                ENDIF
+                num_grid_cells(1,mype + 1) = grid_size
+                WRITE(*,*) "grid_size: ", grid_size, " grid_offset: ", grid_offset
+                DEALLOCATE(task)
+            ENDIF               
+
+        ELSE
+            WRITE(*,*) "Only one bottom model is currently supported!"
         ENDIF
+
+        
 
     END SUBROUTINE read_scrip_grid_dimensions
 
@@ -171,7 +205,6 @@ MODULE flux_calculator_io
 
         CALL hdlerr( NF90_INQ_DIMID(nc, 'src_grid_rank' ,  varid),    __LINE__ )                      ! get variable id
         CALL hdlerr( NF90_INQUIRE_DIMENSION(nc, varid, len=src_grid_rank), __LINE__ ) ! get variable values
-        WRITE (*,*) 'src_grid_rank ', src_grid_rank
 
         CALL hdlerr( NF90_INQ_VARID(nc, 'src_grid_dims' ,  varid),    __LINE__ )                      ! get variable id
         CALL hdlerr( NF90_GET_VAR (nc, varid, remapping_info%src_grid_dims(:), [1], [src_grid_rank]), __LINE__ ) ! get variable values

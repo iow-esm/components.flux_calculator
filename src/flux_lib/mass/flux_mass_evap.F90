@@ -14,6 +14,7 @@ module flux_mass_evap
 
   ! expose all functions
   public flux_mass_evap_cclm
+  public flux_mass_evap_mom5
 
 contains
 
@@ -81,5 +82,38 @@ contains
                        specific_vapor_content_atmos)   
 
   end subroutine flux_mass_evap_cclm
+
+  subroutine flux_mass_evap_mom5( &
+    flux_mass_evap,                         & ! RESULT       (kg/m2/s)
+    diffusion_coefficient_moisture,         & ! a_{moisture} (1)
+    pressure_surface,                       & ! p_s          (Pa)
+    specific_vapor_content_atmos,           & ! q_{v,a}      (kg/kg)
+    specific_vapor_content_surface,         & ! q_{v,s}      (kg/kg)
+    temperature_surface,                    & ! T_s          (K)
+    u_atmos,                                & ! u_a          (m/s)
+    v_atmos                                 & ! v_a          (m/s)
+)
+
+  real(prec), intent(out) :: flux_mass_evap                   ! RESULT       (kg/m2/s)
+  real(prec), intent(in)  :: diffusion_coefficient_moisture   ! a_{moisture} (1)
+  real(prec), intent(in)  :: pressure_surface                 ! p_s          (Pa)
+  real(prec), intent(in)  :: specific_vapor_content_atmos     ! q_{v,a}      (kg/kg)
+  real(prec), intent(in)  :: specific_vapor_content_surface   ! q_{v,s}      (kg/kg)
+  real(prec), intent(in)  :: temperature_surface              ! T_s          (K)
+  real(prec), intent(in)  :: u_atmos                          ! u_a          (m/s)
+  real(prec), intent(in)  :: v_atmos                          ! v_a          (m/s)
+
+  call flux_mass_evap_cclm(flux_mass_evap,        & ! RESULT       (kg/m2/s)
+          diffusion_coefficient_moisture,         & ! a_{moisture} (1)
+          pressure_surface,                       & ! p_s          (Pa)
+          specific_vapor_content_atmos,           & ! q_{v,a}      (kg/kg)
+          specific_vapor_content_surface,         & ! q_{v,s}      (kg/kg)
+          temperature_surface,                    & ! T_s          (K)
+          u_atmos,                                & ! u_a          (m/s)
+          v_atmos                                 & ! v_a          (m/s)
+  )
+      
+
+end subroutine flux_mass_evap_mom5
 
 end module flux_mass_evap

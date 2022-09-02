@@ -39,10 +39,11 @@ MODULE flux_calculator_basic
     ! (3) declare idx_varname                                      !
     ! (4) add a line in init_varname_idx                           !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    INTEGER, PARAMETER                                   :: MAX_VARNAMES = 32
+    INTEGER, PARAMETER                                   :: MAX_VARNAMES = 35
     CHARACTER(len=4), PARAMETER, DIMENSION(MAX_VARNAMES) :: varnames = [ &
         'ALBE', 'ALBA', 'AMOI', 'AMOM', 'FARE', 'FICE', 'PATM', 'PSUR', &
         'QATM', 'TATM', 'TSUR', 'UATM', 'VATM', 'U10M', 'V10M', &  ! variables read in
+        'CMOM', 'CMOI', 'CHEA', &                                  ! transfer coefficients from ocean model
         'QSUR',                                                 &  ! auxiliary variables calculated
         'HLAT', 'HSEN',                                         &  ! heat fluxes
         'MEVA', 'MPRE', 'MRAI', 'MSNO',                         &  ! mass fluxes
@@ -51,6 +52,7 @@ MODULE flux_calculator_basic
 
     INTEGER :: idx_ALBE, idx_ALBA, idx_AMOI, idx_AMOM, idx_FARE, idx_FICE, idx_PATM, idx_PSUR
     INTEGER :: idx_QATM, idx_TATM, idx_TSUR, idx_UATM, idx_VATM, idx_U10M, idx_V10M
+    INTEGER :: idx_CMOM, idx_CMOI, idx_CHEA
     INTEGER :: idx_QSUR
     INTEGER :: idx_HLAT, idx_HSEN
     INTEGER :: idx_MEVA, idx_MPRE, idx_MRAI, idx_MSNO
@@ -146,7 +148,7 @@ MODULE flux_calculator_basic
                     input_field(num_input_fields)%which_grid = which_grid
                     input_field(num_input_fields)%field => local_field%var(i)%field
                     input_field(num_input_fields)%early=.FALSE.
-                    IF ((myname=="FARE") .OR. (myname=="TSUR") .OR. (myname=="ALBE")) THEN
+                    IF ((myname=="FARE") .OR. (myname=="TSUR") .OR. (myname=="ALBE") .OR. (myname=="CMOM") .OR. (myname=="CMOI") .OR. (myname=="CHEA")) THEN
                         input_field(num_input_fields)%early=.TRUE.
                     ENDIF
                     input_field(num_input_fields)%surface_type = surface_type
@@ -537,6 +539,9 @@ MODULE flux_calculator_basic
             IF (varnames(i) == 'VATM')    idx_VATM = i    ! Northward velocity in lowest atmospheric grid cell       (m/s)
             IF (varnames(i) == 'U10M')    idx_U10M = i    ! Eastward velocity 10m above the surface                  (m/s)
             IF (varnames(i) == 'V10M')    idx_V10M = i    ! Northward velocity 10m above the surface                 (m/s)
+            IF (varnames(i) == 'CMOM')    idx_CMOM = i    ! Momentum transfer coefficient fom ocean model            (1)
+            IF (varnames(i) == 'CMOI')    idx_CMOI = i    ! Moisture transfer coefficient fom ocean model            (1)
+            IF (varnames(i) == 'CHEA')    idx_CHEA = i    ! Heat transfer coefficient fom ocean model                (1)
             ! AUXILIARY VARIABLES:
             IF (varnames(i) == 'QSUR')    idx_QSUR = i    ! Moisture content directly above the surface              (kg/kg)
             ! FLUXES: (all are positive upward, such that e.g. precipitation is always negative)

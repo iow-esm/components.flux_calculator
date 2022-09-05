@@ -24,7 +24,7 @@ module flux_library
   use flux_radiation_blackbody,       only: flux_radiation_blackbody_StBo
   use distribute_radiation_flux_mod,  only: distribute_radiation_flux
   !   momentum fluxes
-  use flux_momentum,                  only: flux_momentum_cclm
+  use flux_momentum,                  only: flux_momentum_cclm, flux_momentum_mom5
 
   implicit none ; private
 
@@ -35,6 +35,7 @@ module flux_library
   public flux_mass_evap_cclm
   public flux_mass_evap_mom5
   public flux_momentum_cclm
+  public flux_momentum_mom5
   public flux_radiation_blackbody_StBo
   public distribute_radiation_flux
   public spec_vapor_surface_cclm

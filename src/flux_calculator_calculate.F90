@@ -190,6 +190,17 @@ MODULE flux_calculator_calculate
                                                 local_field(i,which_grid)%var(idx_UATM)%field(j), &
                                                 local_field(i,which_grid)%var(idx_VATM)%field(j))
                     ENDDO
+                ELSEIF (trim(method)=='MOM5') THEN
+                    DO j=1,grid_size(which_grid) 
+                        CALL flux_momentum_mom5(local_field(i,which_grid)%var(idx_UMOM)%field(j), &
+                                                dummy,                                            &
+                                                local_field(i,which_grid)%var(idx_CMOM)%field(j), &
+                                                local_field(i,which_grid)%var(idx_PSUR)%field(j), &
+                                                local_field(i,which_grid)%var(idx_QSUR)%field(j), &
+                                                local_field(i,which_grid)%var(idx_TSUR)%field(j), &
+                                                local_field(i,which_grid)%var(idx_UATM)%field(j), &
+                                                local_field(i,which_grid)%var(idx_VATM)%field(j))
+                    ENDDO
                 ENDIF
             ENDIF
         ENDDO

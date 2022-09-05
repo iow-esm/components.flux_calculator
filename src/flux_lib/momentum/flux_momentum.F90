@@ -14,6 +14,7 @@ module flux_momentum
 
   ! expose all functions
   public flux_momentum_cclm
+  public flux_momentum_mom5
 
 contains
 
@@ -72,5 +73,37 @@ contains
     flux_momentum_north = - flux_air * v_atmos                      ! upward flux of northward momentum (N/m2)
 
   end subroutine flux_momentum_cclm
+
+  subroutine flux_momentum_mom5( &
+    flux_momentum_east,                     & ! RESULT       (N/m2)
+    flux_momentum_north,                    & ! RESULT       (N/m2)
+    diffusion_coefficient_momentum,         & ! a_{momentum} (1)
+    pressure_surface,                       & ! p_s          (Pa)
+    specific_vapor_content_surface,         & ! q_{v,s}      (kg/kg)
+    temperature_surface,                    & ! T_s          (K)
+    u_atmos,                                & ! u_a          (m/s)
+    v_atmos                                 & ! v_a          (m/s)
+)
+
+    real(prec), intent(out) :: flux_momentum_east               ! RESULT       (N/m2)
+    real(prec), intent(out) :: flux_momentum_north              ! RESULT       (N/m2)
+    real(prec), intent(in)  :: diffusion_coefficient_momentum   ! a_{momentum} (1)
+    real(prec), intent(in)  :: pressure_surface                 ! p_s          (Pa)
+    real(prec), intent(in)  :: specific_vapor_content_surface   ! q_{v,s}      (kg/kg)
+    real(prec), intent(in)  :: temperature_surface              ! T_s          (K)
+    real(prec), intent(in)  :: u_atmos                          ! u_a          (m/s)
+    real(prec), intent(in)  :: v_atmos                          ! v_a          (m/s)
+
+    call flux_momentum_cclm(flux_momentum_east,                     & ! RESULT       (N/m2)
+                            flux_momentum_north,                    & ! RESULT       (N/m2)
+                            diffusion_coefficient_momentum,         & ! a_{momentum} (1)
+                            pressure_surface,                       & ! p_s          (Pa)
+                            specific_vapor_content_surface,         & ! q_{v,s}      (kg/kg)
+                            temperature_surface,                    & ! T_s          (K)
+                            u_atmos,                                & ! u_a          (m/s)
+                            v_atmos                                 & ! v_a          (m/s)
+    )
+
+end subroutine flux_momentum_mom5  
 
 end module flux_momentum

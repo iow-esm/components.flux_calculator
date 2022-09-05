@@ -163,6 +163,15 @@ MODULE flux_calculator_prepare
                 IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_TATM)%field )) missing_field=trim(missing_field)//' TSUR'
                 IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_UATM)%field )) missing_field=trim(missing_field)//' UATM'
                 IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_VATM)%field )) missing_field=trim(missing_field)//' VATM'
+            ELSEIF (trim(method)=='MOM5') THEN 
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_AMOI)%field )) missing_field=trim(missing_field)//' CHEA'
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_PATM)%field )) missing_field=trim(missing_field)//' PATM'
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_PSUR)%field )) missing_field=trim(missing_field)//' PSUR'
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_QSUR)%field )) missing_field=trim(missing_field)//' QSUR'
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_TATM)%field )) missing_field=trim(missing_field)//' TATM'
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_TATM)%field )) missing_field=trim(missing_field)//' TSUR'
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_UATM)%field )) missing_field=trim(missing_field)//' UATM'
+                IF (.NOT. ASSOCIATED( local_field(surface_type,which_grid)%var(idx_VATM)%field )) missing_field=trim(missing_field)//' VATM'
             ELSE
                 WRITE (w_unit,*) "Error calculating ",myvarname," for surface_type ",surface_type," on the grid ",grid_name(which_grid),":"
                 WRITE (w_unit,*) "    Method ",method," is not known. "

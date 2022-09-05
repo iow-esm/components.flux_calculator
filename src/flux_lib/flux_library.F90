@@ -19,7 +19,7 @@ module flux_library
   use flux_mass_evap,                 only: flux_mass_evap_cclm, flux_mass_evap_mom5
   !   heat fluxes
   use flux_heat_latent,               only: flux_heat_latent_ice, flux_heat_latent_water
-  use flux_heat_sensible,             only: flux_heat_sensible_cclm
+  use flux_heat_sensible,             only: flux_heat_sensible_cclm, flux_heat_sensible_mom5
   !   radiation fluxes
   use flux_radiation_blackbody,       only: flux_radiation_blackbody_StBo
   use distribute_radiation_flux_mod,  only: distribute_radiation_flux
@@ -32,6 +32,7 @@ module flux_library
   public flux_heat_latent_ice
   public flux_heat_latent_water
   public flux_heat_sensible_cclm
+  public flux_heat_sensible_mom5
   public flux_mass_evap_cclm
   public flux_mass_evap_mom5
   public flux_momentum_cclm

@@ -153,6 +153,18 @@ MODULE flux_calculator_calculate
                                                      local_field(i,1)%var(idx_UATM)%field(j), &
                                                      local_field(i,1)%var(idx_VATM)%field(j))
                     ENDDO
+                ELSEIF (trim(method)=='MOM5') THEN
+                    DO j=1,grid_size(1) 
+                        CALL flux_heat_sensible_mom5(local_field(i,1)%var(idx_HSEN)%field(j), &
+                                                        local_field(i,1)%var(idx_CHEA)%field(j), &
+                                                        local_field(i,1)%var(idx_PATM)%field(j), &
+                                                        local_field(i,1)%var(idx_PSUR)%field(j), &
+                                                        local_field(i,1)%var(idx_QATM)%field(j), &
+                                                        local_field(i,1)%var(idx_TATM)%field(j), &
+                                                        local_field(i,1)%var(idx_TSUR)%field(j), &
+                                                        local_field(i,1)%var(idx_UATM)%field(j), &
+                                                        local_field(i,1)%var(idx_VATM)%field(j))
+                    ENDDO
                 ENDIF
             ENDIF
         ENDDO

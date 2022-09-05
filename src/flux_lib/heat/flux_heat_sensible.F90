@@ -16,6 +16,7 @@ module flux_heat_sensible
 
   ! expose all functions
   public flux_heat_sensible_cclm
+  public flux_heat_sensible_mom5
 
 contains
 
@@ -95,6 +96,42 @@ contains
     flux_heat_sensible = flux_air * heat_capacity_air *        &  ! sensible heat flux (W/m2)
                            (temperature_surface - temperature_atmos * EF)   
   end subroutine flux_heat_sensible_cclm
+
+  subroutine flux_heat_sensible_mom5( &
+    flux_heat_sensible,                     & ! RESULT       (W/m2)
+    diffusion_coefficient_moisture,         & ! a_{moisture} (1)
+    pressure_atmos,                         & ! p_a          (Pa)
+    pressure_surface,                       & ! p_s          (Pa)
+    specific_vapor_content_surface,         & ! q_{v,s}      (kg/kg)
+    temperature_atmos,                      & ! T_a          (K)
+    temperature_surface,                    & ! T_s          (K)
+    u_atmos,                                & ! u_a          (m/s)
+    v_atmos                                 & ! v_a          (m/s)
+)
+
+    real(prec), intent(out) :: flux_heat_sensible               ! RESULT       (W/m2)
+    real(prec), intent(in)  :: diffusion_coefficient_moisture   ! a_{moisture} (1)
+    real(prec), intent(in)  :: pressure_atmos                   ! p_a          (Pa)
+    real(prec), intent(in)  :: pressure_surface                 ! p_s          (Pa)
+    real(prec), intent(in)  :: specific_vapor_content_surface   ! q_{v,s}      (kg/kg)
+    real(prec), intent(in)  :: temperature_atmos                ! T_a          (K)
+    real(prec), intent(in)  :: temperature_surface              ! T_s          (K)
+    real(prec), intent(in)  :: u_atmos                          ! u_a          (m/s)
+    real(prec), intent(in)  :: v_atmos                          ! v_a          (m/s)
+
+
+    call flux_heat_sensible_cclm(flux_heat_sensible,                     & ! RESULT       (W/m2)
+                                 diffusion_coefficient_moisture,         & ! a_{moisture} (1)
+                                 pressure_atmos,                         & ! p_a          (Pa)
+                                 pressure_surface,                       & ! p_s          (Pa)
+                                 specific_vapor_content_surface,         & ! q_{v,s}      (kg/kg)
+                                 temperature_atmos,                      & ! T_a          (K)
+                                 temperature_surface,                    & ! T_s          (K)
+                                 u_atmos,                                & ! u_a          (m/s)
+                                 v_atmos                                 & ! v_a          (m/s)
+    )
+  
+end subroutine flux_heat_sensible_mom5  
   
 end module flux_heat_sensible
 

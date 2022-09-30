@@ -15,6 +15,7 @@ module flux_momentum
   ! expose all functions
   public flux_momentum_cclm
   public flux_momentum_mom5
+  public flux_momentum_meier
 
 contains
 
@@ -105,5 +106,35 @@ contains
     )
 
 end subroutine flux_momentum_mom5  
+
+subroutine flux_momentum_meier( &
+  flux_momentum_east,                     & ! RESULT       (N/m2)
+  flux_momentum_north,                    & ! RESULT       (N/m2)
+  u_atmos,                                & ! u_a          (m/s)
+  v_atmos                                 & ! v_a          (m/s)
+)
+
+  real(prec), intent(out) :: flux_momentum_east               ! RESULT       (N/m2)
+  real(prec), intent(out) :: flux_momentum_north              ! RESULT       (N/m2)
+  real(prec), intent(in)  :: u_atmos                          ! u_a          (m/s)
+  real(prec), intent(in)  :: v_atmos                          ! v_a          (m/s)
+
+  real(prec) :: rho_a = 1.225 ! air density [kg / m^3] 
+  real(prec) :: c_aw ! transfer coefficient for momentum [1]
+  real(prec) :: vel ! absolute value of wind speed
+
+  vel = sqrt(u_atmos*u_atmos + v_atmos*v_atmos)                  ! atmospheric velocity (m/s)  
+
+  ! get Stanton number according to temperature difference
+  IF (vel .lt. 11.0) THEN
+    c_aw = 1.2E-03
+  ELSE
+    c_aw = 0.49E-03 + 0.065E-03 * vel 
+  ENDIF
+
+  flux_momentum_east = - rho_a * c_aw * vel * u_atmos
+  flux_momentum_north = - rho_a * c_aw * vel * v_atmos
+
+end subroutine flux_momentum_meier
 
 end module flux_momentum

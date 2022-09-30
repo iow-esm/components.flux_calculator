@@ -17,6 +17,7 @@ module flux_heat_sensible
   ! expose all functions
   public flux_heat_sensible_cclm
   public flux_heat_sensible_mom5
+  public flux_heat_sensible_meier
 
 contains
 
@@ -132,6 +133,38 @@ contains
     )
   
 end subroutine flux_heat_sensible_mom5  
+
+subroutine flux_heat_sensible_meier( &
+  flux_heat_sensible,                     & ! RESULT       (W/m2)
+  temperature_atmos,                      & ! T_a          (K)
+  temperature_surface,                    & ! T_s          (K)
+  u_atmos,                                & ! u_a          (m/s)
+  v_atmos                                 & ! v_a          (m/s)
+)
+
+  real(prec), intent(out) :: flux_heat_sensible               ! RESULT       (W/m2)
+  real(prec), intent(in)  :: temperature_atmos                ! T_a          (K)
+  real(prec), intent(in)  :: temperature_surface              ! T_s          (K)
+  real(prec), intent(in)  :: u_atmos                          ! u_a          (m/s)
+  real(prec), intent(in)  :: v_atmos                          ! v_a          (m/s)
+
+  real(prec) :: rho_a = 1.225 ! air density [kg / m^3] 
+  real(prec) :: c_pa = 1.008E+03 ! specific heat capacity of air [J / (kg K)]
+  real(prec) :: c_aw ! transfer coefficient for sensible heat (Stanton number) [1]
+  real(prec) :: vel ! absolute value of wind speed
+
+  ! get Stanton number according to temperature difference
+  IF (temperature_atmos .lt. temperature_surface) THEN
+    c_aw = 1.13E-03 ! unstable
+  ELSE
+    c_aw = 0.66E-03 ! stable
+  ENDIF
+
+  vel = sqrt(u_atmos*u_atmos + v_atmos*v_atmos)                  ! atmospheric velocity (m/s)
+
+  flux_heat_sensible = rho_a * c_pa * c_aw * vel * (temperature_surface - temperature_atmos)
+
+end subroutine flux_heat_sensible_meier
   
 end module flux_heat_sensible
 

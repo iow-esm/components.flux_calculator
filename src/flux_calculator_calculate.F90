@@ -85,6 +85,14 @@ MODULE flux_calculator_calculate
                                                  local_field(i,1)%var(idx_UATM)%field(j), &
                                                  local_field(i,1)%var(idx_VATM)%field(j))                        
                     ENDDO
+                ELSEIF (trim(method)=='MEIER') THEN
+                    DO j=1,grid_size(1)
+                        CALL flux_mass_evap_meier(local_field(i,1)%var(idx_MEVA)%field(j), &
+                                                    local_field(i,1)%var(idx_QATM)%field(j), &
+                                                    local_field(i,1)%var(idx_TSUR)%field(j), &
+                                                    local_field(i,1)%var(idx_UATM)%field(j), &
+                                                    local_field(i,1)%var(idx_VATM)%field(j))                        
+                    ENDDO                    
                 ENDIF
             ENDIF
         ENDDO
@@ -165,6 +173,14 @@ MODULE flux_calculator_calculate
                                                         local_field(i,1)%var(idx_UATM)%field(j), &
                                                         local_field(i,1)%var(idx_VATM)%field(j))
                     ENDDO
+                ELSEIF (trim(method)=='MEIER') THEN
+                    DO j=1,grid_size(1) 
+                        CALL flux_heat_sensible_meier(local_field(i,1)%var(idx_HSEN)%field(j), &
+                                                        local_field(i,1)%var(idx_TATM)%field(j), &
+                                                        local_field(i,1)%var(idx_TSUR)%field(j), &
+                                                        local_field(i,1)%var(idx_UATM)%field(j), &
+                                                        local_field(i,1)%var(idx_VATM)%field(j))
+                    ENDDO                    
                 ENDIF
             ENDIF
         ENDDO
@@ -213,6 +229,13 @@ MODULE flux_calculator_calculate
                                                 local_field(i,which_grid)%var(idx_UATM)%field(j), &
                                                 local_field(i,which_grid)%var(idx_VATM)%field(j))
                     ENDDO
+                ELSEIF (trim(method)=='MEIER') THEN
+                    DO j=1,grid_size(which_grid) 
+                        CALL flux_momentum_meier(local_field(i,which_grid)%var(idx_UMOM)%field(j), &
+                                                dummy,                                            &
+                                                local_field(i,which_grid)%var(idx_UATM)%field(j), &
+                                                local_field(i,which_grid)%var(idx_VATM)%field(j))
+                    ENDDO                    
                 ENDIF
             ENDIF
         ENDDO
@@ -259,6 +282,13 @@ MODULE flux_calculator_calculate
                                                 local_field(i,which_grid)%var(idx_UATM)%field(j), &
                                                 local_field(i,which_grid)%var(idx_VATM)%field(j))
                     ENDDO
+                ELSEIF (trim(method)=='MEIER') THEN
+                    DO j=1,grid_size(which_grid) 
+                        CALL flux_momentum_meier(dummy,                                            &
+                                                local_field(i,which_grid)%var(idx_VMOM)%field(j), &
+                                                local_field(i,which_grid)%var(idx_UATM)%field(j), &
+                                                local_field(i,which_grid)%var(idx_VATM)%field(j))
+                    ENDDO                    
                 ENDIF
             ENDIF
         ENDDO

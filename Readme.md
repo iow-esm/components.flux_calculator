@@ -13,7 +13,37 @@ The commnuicated information is mapped from the models' grid to the exchange gri
 
 # Versions
 
-## 1.01.00 (latest release)
+## 1.02.00 (latest release)
+
+| date        | author(s)   | link      |
+|---          |---          |---        |
+| 2022-12-22  | SK          | [1.02.00](https://git.io-warnemuende.de/iow_esm/components.flux_calculator/src/branch/1.02.00)     | 
+
+<details>
+
+### changes
+* fluxes can now be calculated according to
+  * the MOM5 ocean model (formulars the same as in CCLM but with different transfer coefficients)
+  * the RCO ocean model, Meier et al., SMHI REPORTS OCEANOGRAPHY No. 26, August 1999
+  * caution this is still a bit experimental
+    
+### dependencies
+* OASIS3-MCT libraries
+* see build scripts for more dependencies  
+  
+### known issues
+* none so far
+
+### tested with
+* intensively tested on both HLRN machines
+  * using example setups available under:
+    (coupled) /scratch/usr/mviowmod/IOW_ESM/setups/
+              MOM5_Baltic-CCLM_Eurocordex/example_8nm_0.22deg/1.00.00
+* can be built and run on Haumea but output is not intensively tested
+  
+</details>
+
+## 1.01.00
 
 | date        | author(s)   | link      |
 |---          |---          |---        |

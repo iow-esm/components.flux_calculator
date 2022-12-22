@@ -17,7 +17,7 @@ module flux_heat_sensible
   ! expose all functions
   public flux_heat_sensible_cclm
   public flux_heat_sensible_mom5
-  public flux_heat_sensible_meier
+  public flux_heat_sensible_rco
 
 contains
 
@@ -134,7 +134,7 @@ contains
   
 end subroutine flux_heat_sensible_mom5  
 
-subroutine flux_heat_sensible_meier( &
+subroutine flux_heat_sensible_rco( &
   flux_heat_sensible,                     & ! RESULT       (W/m2)
   temperature_atmos,                      & ! T_a          (K)
   temperature_surface,                    & ! T_s          (K)
@@ -164,7 +164,7 @@ subroutine flux_heat_sensible_meier( &
 
   flux_heat_sensible = rho_a * c_pa * c_aw * vel * (temperature_surface - temperature_atmos)
 
-end subroutine flux_heat_sensible_meier
+end subroutine flux_heat_sensible_rco
   
 end module flux_heat_sensible
 

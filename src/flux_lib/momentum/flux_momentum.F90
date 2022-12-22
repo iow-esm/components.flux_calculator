@@ -15,7 +15,7 @@ module flux_momentum
   ! expose all functions
   public flux_momentum_cclm
   public flux_momentum_mom5
-  public flux_momentum_meier
+  public flux_momentum_rco
 
 contains
 
@@ -107,7 +107,7 @@ contains
 
 end subroutine flux_momentum_mom5  
 
-subroutine flux_momentum_meier( &
+subroutine flux_momentum_rco( &
   flux_momentum_east,                     & ! RESULT       (N/m2)
   flux_momentum_north,                    & ! RESULT       (N/m2)
   u_atmos,                                & ! u_a          (m/s)
@@ -135,6 +135,6 @@ subroutine flux_momentum_meier( &
   flux_momentum_east = - rho_a * c_aw * vel * u_atmos
   flux_momentum_north = - rho_a * c_aw * vel * v_atmos
 
-end subroutine flux_momentum_meier
+end subroutine flux_momentum_rco
 
 end module flux_momentum

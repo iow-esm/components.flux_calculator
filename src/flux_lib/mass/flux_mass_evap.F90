@@ -15,7 +15,7 @@ module flux_mass_evap
   ! expose all functions
   public flux_mass_evap_cclm
   public flux_mass_evap_mom5
-  public flux_mass_evap_meier
+  public flux_mass_evap_rco
 
 contains
 
@@ -117,7 +117,7 @@ contains
 
 end subroutine flux_mass_evap_mom5
 
-subroutine flux_mass_evap_meier( &
+subroutine flux_mass_evap_rco( &
   flux_mass_evap,                         & ! RESULT       (kg/m2/s)
   specific_vapor_content_atmos,           & ! q_{v,a}      (kg/kg)
   temperature_surface,                    & ! T_s          (K)
@@ -155,6 +155,6 @@ vel = sqrt(u_atmos*u_atmos + v_atmos*v_atmos)                  ! atmospheric vel
 ! mass flux of evaporation
 flux_mass_evap = rho_a * c_aw * vel * (q_w - specific_vapor_content_atmos)
 
-end subroutine flux_mass_evap_meier
+end subroutine flux_mass_evap_rco
 
 end module flux_mass_evap

@@ -79,7 +79,7 @@ contains
                  max(vel, u_min_evap) * pressure_surface /        &
                  (gas_constant_air * T_tilde)
         
-    flux_mass_evap = 0.8 * flux_air * (specific_vapor_content_surface - &  ! mass flux of water (kg/m2/s)
+    flux_mass_evap = flux_air * (specific_vapor_content_surface - &  ! mass flux of water (kg/m2/s)
                        specific_vapor_content_atmos)   
 
   end subroutine flux_mass_evap_cclm

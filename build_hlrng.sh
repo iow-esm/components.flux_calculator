@@ -65,6 +65,7 @@ $FC -c $FFLAGS ../src/flux_calculator_calculate.F90
 $FC -c $FFLAGS ../src/flux_calculator_parse_arg.F90
 $FC -c $FFLAGS ../src/flux_calculator_io.F90 -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
 $FC -c $FFLAGS ../src/flux_calculator_create_namcouple.F90
-$FC $FFLAGS -o ../"${bin_dir}"/flux_calculator ../src/flux_calculator.F90 flux_calculator_basic.o flux_calculator_prepare.o flux_calculator_calculate.o flux_calculator_io.o flux_calculator_parse_arg.o flux_calculator_create_namcouple.o flux_library.a $INCLUDES $LIBS -Wl,-rpath,${IOW_ESM_NETCDF_LIBRARY}
+$FC -c $FFLAGS ../src/bias_corrections.F90 -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
+$FC $FFLAGS -o ../"${bin_dir}"/flux_calculator ../src/flux_calculator.F90 flux_calculator_basic.o flux_calculator_prepare.o flux_calculator_calculate.o flux_calculator_io.o flux_calculator_parse_arg.o flux_calculator_create_namcouple.o bias_corrections.o flux_library.a $INCLUDES $LIBS -Wl,-rpath,${IOW_ESM_NETCDF_LIBRARY}
 
 cd -

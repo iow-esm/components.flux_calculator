@@ -15,6 +15,8 @@ PROGRAM flux_calculator
   USE flux_calculator_parse_arg
   USE flux_calculator_create_namcouple
 
+  USE bias_corrections, ONLY : initialize_bias_corrections
+
   ! Use OASIS communication library
   USE mod_oasis
 
@@ -174,6 +176,8 @@ PROGRAM flux_calculator
   READ(10,nml=input)
   WRITE(*,nml=input)
   CLOSE(10)
+
+  
 
   ! Initialize the idx_???? variables which store the index of a variable name
   CALL init_varname_idx
@@ -843,6 +847,10 @@ ENDIF
     CALL oasis_abort(comp_id,comp_name,'Failed to call oasis_enddef')
   ENDIF
   WRITE (w_unit,*) 'Finished initialization.'
+
+  !### if available, initialize bias corrections
+
+  CALL initialize_bias_corrections('flux_calculator.nml', grid_offset(1), grid_size(1))
 
   !###############################################################################
   !# STEP 2:  TIME LOOP                                                          #

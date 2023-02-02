@@ -21,7 +21,7 @@ module distribute_radiation_flux_mod
 
   
       ! apply surface-type-dependent albedo and get rid of averaged albedo
-      flux_radiation_surface_type = flux_radiation_averaged * (1.0 - albedo_surface_type) !/ (1.0 - albedo_averaged)
+      flux_radiation_surface_type = flux_radiation_averaged * (1.0 - albedo_surface_type) / (1.0 - albedo_averaged)
 
     end subroutine distribute_radiation_flux
   

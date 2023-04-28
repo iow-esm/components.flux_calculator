@@ -15,6 +15,8 @@ PROGRAM flux_calculator
   USE flux_calculator_parse_arg
   USE flux_calculator_create_namcouple
 
+  USE bias_corrections, ONLY : initialize_bias_corrections
+
   ! Use OASIS communication library
   USE mod_oasis
 
@@ -174,6 +176,8 @@ PROGRAM flux_calculator
   READ(10,nml=input)
   WRITE(*,nml=input)
   CLOSE(10)
+
+  
 
   ! Initialize the idx_???? variables which store the index of a variable name
   CALL init_varname_idx
@@ -844,12 +848,17 @@ ENDIF
   ENDIF
   WRITE (w_unit,*) 'Finished initialization.'
 
+  !### if available, initialize bias corrections
+
+  CALL initialize_bias_corrections('flux_calculator.nml', grid_offset(1), grid_size(1))
+
   !###############################################################################
   !# STEP 2:  TIME LOOP                                                          #
   !###############################################################################
   
   DO n_timestep = 1,num_timesteps
     current_time = (n_timestep - 1) * timestep
+    current_step_time = current_time ! update global time counter
     IF (verbosity_level >= VERBOSITY_LEVEL_STANDARD) THEN
       WRITE (w_unit,*) 'Time since start = ',current_time,' seconds.'
       CALL FLUSH(w_unit)

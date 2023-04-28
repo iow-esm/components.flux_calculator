@@ -121,6 +121,9 @@ MODULE flux_calculator_basic
         TYPE(realarray)    :: weight
     END TYPE sparse_regridding_matrix
 
+    ! time of current step in seconds from the start of this instance (updated main loop)
+    INTEGER :: current_step_time = 0
+
     CONTAINS
     
     SUBROUTINE add_input_field(myname, my_letter, surface_type, which_grid, local_field, num_input_fields, input_field)

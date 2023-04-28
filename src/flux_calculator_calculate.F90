@@ -3,6 +3,10 @@ MODULE flux_calculator_calculate
 
     use flux_calculator_basic
     use flux_library
+    use bias_corrections, only: lcorrections, corrections, E_MASS_EVAP_CORRECTION, init_date
+
+    use, intrinsic :: iso_c_binding
+    use call_python, only : get, set, call_function
 
     IMPLICIT NONE
 
@@ -57,6 +61,16 @@ MODULE flux_calculator_calculate
         CHARACTER(len=4), PARAMETER :: myvarname = 'MEVA'
         CHARACTER(len=20)           :: method
         INTEGER                     :: i, j
+        INTEGER :: current_month(1)
+
+        ! if we want to apply a correction we need to know the month (use python interface for that)
+        IF (lcorrections(E_MASS_EVAP_CORRECTION)) THEN
+            CALL set("init_date", init_date)
+            CALL set("seconds", current_step_time)
+            call call_function("datetime_helpers", "get_current_date")
+            call get("current_month", current_month)
+            !WRITE (*,*) "Current month = ", current_month(1)
+        ENDIF
 
         DO i=1,num_surface_types
             method = methods(my_bottom_model,i)
@@ -93,6 +107,12 @@ MODULE flux_calculator_calculate
                                                     local_field(i,1)%var(idx_UATM)%field(j), &
                                                     local_field(i,1)%var(idx_VATM)%field(j))                        
                     ENDDO                    
+                ENDIF
+
+                IF (lcorrections(E_MASS_EVAP_CORRECTION)) THEN
+                    DO j=1,grid_size(1)
+                        local_field(i,1)%var(idx_MEVA)%field(j) = local_field(i,1)%var(idx_MEVA)%field(j) + corrections(E_MASS_EVAP_CORRECTION, current_month(1), j)
+                    ENDDO
                 ENDIF
             ENDIF
         ENDDO

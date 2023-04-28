@@ -858,6 +858,7 @@ ENDIF
   
   DO n_timestep = 1,num_timesteps
     current_time = (n_timestep - 1) * timestep
+    current_step_time = current_time ! update global time counter
     IF (verbosity_level >= VERBOSITY_LEVEL_STANDARD) THEN
       WRITE (w_unit,*) 'Time since start = ',current_time,' seconds.'
       CALL FLUSH(w_unit)

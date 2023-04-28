@@ -19,7 +19,7 @@ ENUM, BIND(C)
 ENDENUM
 
 ! initializes names for corrextion -> corresponds to out variable that is corrected
-CHARACTER(len=8), PARAMETER, DIMENSION(E_N_CORRECTIONS) :: corrections_names = [ &
+CHARACTER(len=10), PARAMETER, DIMENSION(E_N_CORRECTIONS) :: corrections_names = [ &
     'mass_evap' &
     ] 
 
@@ -190,6 +190,9 @@ SUBROUTINE initialize_bias_corrections(filename, grid_offset, grid_size)
   ! allocate resources for each process
   ALLOCATE(corrections(E_N_CORRECTIONS, 12, grid_size))
 
+  ! intialize with zero
+  corrections(:,:,:) = 0.0
+
   ! Read in correction for each month
   DO i = 1, E_N_CORRECTIONS
       IF (.NOT. lcorrections(i)) THEN
@@ -202,9 +205,9 @@ SUBROUTINE initialize_bias_corrections(filename, grid_offset, grid_size)
 
           correction_filename = 'corrections/'//TRIM(corrections_names(i))//'-'//TRIM(yj)//'.nc'
 
-          istatus = nf90_open(TRIM(filename), NF90_NOWRITE, ncfileid)
+          istatus = nf90_open(TRIM(correction_filename), NF90_NOWRITE, ncfileid)
           IF (istatus /= NF90_NOERR) THEN
-              WRITE(*,*) 'Could not open ', TRIM(filename), ' for bias correction. Unset correction.'
+              WRITE(*,*) 'Could not open ', TRIM(correction_filename), ' for bias correction. Unset correction.'
               CYCLE
           ENDIF
 
@@ -232,7 +235,7 @@ SUBROUTINE initialize_bias_corrections(filename, grid_offset, grid_size)
 
           istatus = nf90_close(ncfileid)
           IF (istatus /= NF90_NOERR) THEN
-              WRITE(*,*) 'Could not close ', TRIM(filename), 'for bias correction.'
+              WRITE(*,*) 'Could not close ', TRIM(correction_filename), 'for bias correction.'
               CYCLE
           ENDIF
 

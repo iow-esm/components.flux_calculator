@@ -8,6 +8,8 @@ module unload impi
 module load intel/18.0.5
 module load impi/2018.5
 
+module load anaconda3/2019.03
+
 FC=mpiifort
 AR=ar
 IOW_ESM_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )/../.."
@@ -59,13 +61,19 @@ $FC -c $FFLAGS ../src/flux_lib/*.F90
 rm flux_library.a
 $AR rv flux_library.a *.o
 
+cp -r ${PWD}/../src/pyfort/* .
+python3 pyfort_src.py "$PWD"
+$FC -c -Wl,-rpath,"${PWD}" -L"${PWD}" -lpyfort call_python.f90
+
+$FC -c $FFLAGS ../src/bias_corrections.F90 -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
 $FC -c $FFLAGS ../src/flux_calculator_basic.F90 
 $FC -c $FFLAGS ../src/flux_calculator_prepare.F90
 $FC -c $FFLAGS ../src/flux_calculator_calculate.F90
 $FC -c $FFLAGS ../src/flux_calculator_parse_arg.F90
 $FC -c $FFLAGS ../src/flux_calculator_io.F90 -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
 $FC -c $FFLAGS ../src/flux_calculator_create_namcouple.F90
-$FC -c $FFLAGS ../src/bias_corrections.F90 -I${IOW_ESM_NETCDF_INCLUDE} $LIBS
-$FC $FFLAGS -o ../"${bin_dir}"/flux_calculator ../src/flux_calculator.F90 flux_calculator_basic.o flux_calculator_prepare.o flux_calculator_calculate.o flux_calculator_io.o flux_calculator_parse_arg.o flux_calculator_create_namcouple.o bias_corrections.o flux_library.a $INCLUDES $LIBS -Wl,-rpath,${IOW_ESM_NETCDF_LIBRARY}
+
+$FC $FFLAGS -o ../"${bin_dir}"/flux_calculator ../src/flux_calculator.F90 flux_calculator_basic.o flux_calculator_prepare.o flux_calculator_calculate.o flux_calculator_io.o flux_calculator_parse_arg.o flux_calculator_create_namcouple.o bias_corrections.o call_python.o flux_library.a \
+$INCLUDES  $LIBS -Wl,-rpath,"$PWD",-rpath,${IOW_ESM_NETCDF_LIBRARY},-rpath=/sw/tools/python/anaconda3/2019.03/skl/lib -L/sw/tools/python/anaconda3/2019.03/skl/lib -lpython3.7m  -L"$PWD" -lpyfort   
 
 cd -
